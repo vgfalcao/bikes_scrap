@@ -1,0 +1,29 @@
+{
+  "updated_at": "2025-06-01",
+  "confidence": "high",
+  "speed": {
+    "alu_105":         {"p25": 3800,  "median": 5200,  "p75": 6400,  "novo_loja": 11900, "novo_ml": 9800},
+    "carbono_105":     {"p25": 6800,  "median": 9000,  "p75": 11500, "novo_loja": 18500, "novo_ml": 15500},
+    "carbono_ultegra": {"p25": 9500,  "median": 13000, "p75": 16000, "novo_loja": 26000, "novo_ml": 22000},
+    "carbono_di2":     {"p25": 14000, "median": 19000, "p75": 25000, "novo_loja": 42000, "novo_ml": 36000}
+  },
+  "mtb": {
+    "alu_slx_rockshox":  {"p25": 4800,  "median": 6800,  "p75": 8500,  "novo_loja": 14000, "novo_ml": 12000},
+    "alu_xt_fox":        {"p25": 6500,  "median": 9000,  "p75": 11000, "novo_loja": 18000, "novo_ml": 15000},
+    "carbono_slx":       {"p25": 7000,  "median": 10000, "p75": 13000, "novo_loja": 20000, "novo_ml": 17000},
+    "carbono_xt_fox":    {"p25": 9000,  "median": 12000, "p75": 15000, "novo_loja": 28000, "novo_ml": 24000},
+    "carbono_xtr_eagle": {"p25": 13000, "median": 18000, "p75": 24000, "novo_loja": 40000, "novo_ml": 34000}
+  },
+  "tiers": {
+    "speed": {
+      "A": {"marcas": ["specialized","trek","cannondale","scott","giant","cervelo","pinarello","bmc","colnago","canyon","orbea"], "fator_novo": 1.0},
+      "B": {"marcas": ["merida","cube","fuji","focus","bh","kona","lapierre","ridley","wilier"], "fator_novo": 0.75},
+      "C": {"marcas": ["caloi","oggi","houston","audax","groove","absolute","first","gonew"], "fator_novo": 0.55}
+    },
+    "mtb": {
+      "A": {"marcas": ["specialized","trek","santa cruz","yeti","scott","canyon","orbea","norco","ibis","pivot"], "fator_novo": 1.0},
+      "B": {"marcas": ["sense","oggi","caloi","audax","groove","kona","transition","commencal"], "fator_novo": 0.65},
+      "C": {"marcas": ["absolute","first","houston","gonew","oggi entry"], "fator_novo": 0.45}
+    }
+  }
+}

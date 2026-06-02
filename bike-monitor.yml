@@ -1,0 +1,87 @@
+# .github/workflows/bike-monitor.yml
+# Coloque este arquivo em: .github/workflows/bike-monitor.yml
+# (na raiz do seu repositório GitHub)
+
+name: Bike Monitor
+
+on:
+  # Roda 2x por semana:
+  # Terça às 10h BRT (13h UTC) e Sexta às 10h BRT (13h UTC)
+  # Lógica: terça captura anúncios do fim de semana/segunda.
+  #         sexta captura o meio da semana antes do fim de semana,
+  #         quando vendedores costumam postar mais.
+  schedule:
+    - cron: "0 13 * * 2"   # terça-feira 10h BRT
+    - cron: "0 13 * * 5"   # sexta-feira 10h BRT
+
+  # Permite rodar manualmente pelo GitHub UI (Actions > Bike Monitor > Run workflow)
+  workflow_dispatch:
+    inputs:
+      force_notify:
+        description: "Enviar e-mail mesmo sem novidades"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # 1. Checkout do repositório
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Restaura o cache de seen_ids.json (IDs já notificados)
+      #    Sem isso, a cada run o arquivo seria resetado e você receberia
+      #    os mesmos anúncios de novo.
+      - name: Restore seen IDs cache
+        uses: actions/cache@v4
+        with:
+          path: seen_ids.json
+          key: seen-ids-${{ runner.os }}
+          restore-keys: |
+            seen-ids-
+
+      # 3. Python setup
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      # 4. Instala dependências
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install requests beautifulsoup4 lxml
+
+      # 5. Roda o monitor
+      - name: Run bike monitor
+        env:
+          EMAIL_FROM:        ${{ secrets.EMAIL_FROM }}
+          EMAIL_PASS:        ${{ secrets.EMAIL_PASS }}
+          EMAIL_TO:          ${{ secrets.EMAIL_TO }}
+          PRECO_MAX:         ${{ secrets.PRECO_MAX }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # opcional
+        run: |
+          python scraper.py
+
+      # 6. Salva o seen_ids.json atualizado de volta no cache
+      - name: Save seen IDs cache
+        uses: actions/cache@v4
+        if: always()   # salva mesmo se o job falhou
+        with:
+          path: seen_ids.json
+          key: seen-ids-${{ runner.os }}-${{ github.run_id }}
+
+      # 7. Upload do seen_ids como artefato (debug/backup)
+      - name: Upload seen IDs artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seen-ids-${{ github.run_number }}
+          path: seen_ids.json
+          retention-days: 7
