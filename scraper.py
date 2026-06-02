@@ -100,7 +100,7 @@ KEYWORDS_DESCARTAR = ["infantil","criança","kids","bmx","motorizada","elétrica
 # ──────────────────────────────────────────────────────────────
 
 MODELOS_SPEED = {
-    "cannondale": ["caad10","caad13","supersix","synapse","topstone","systemsix"],
+    "cannondale": ["caad10","caad13","caad14", "optimo", "supersix","synapse","topstone","systemsix"],
     "trek":       ["emonda","domane","madone","checkpoint"],
     "specialized":["tarmac","roubaix","allez","diverge","aethos"],
     "giant":      ["tcr","defy","contend","propel"],
