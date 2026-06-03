@@ -15,6 +15,7 @@ from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
+from db_matcher import load_db, enrich_from_db
 
 # ──────────────────────────────────────────────────────────────
 # CONFIGURAÇÃO
@@ -82,7 +83,8 @@ FILTROS_SPEED = {
     "grupos_ok":    ["105","r7000","r7100","r8000","r8100","ultegra","dura-ace","di2","rival","force","red","etap","axs"],
     "grupos_nok":   ["tiagra","sora","claris","tourney","altus","acera","alivio","deore","1x8","1x9","2x8","2x9"],
     "tamanhos_ok":  ["50","52","54","56"],
-    "ano_min":      2015,
+    "ano_min_alu":  2015,   # alumínio: 2015+
+    "ano_min_carb": 2010,   # carbono tier A (Pinarello, Colnago, etc): 2010+
 }
 
 FILTROS_MTB = {
@@ -100,7 +102,7 @@ KEYWORDS_DESCARTAR = ["infantil","criança","kids","bmx","motorizada","elétrica
 # ──────────────────────────────────────────────────────────────
 
 MODELOS_SPEED = {
-    "cannondale": ["caad10","caad13","caad14", "optimo", "supersix","synapse","topstone","systemsix"],
+    "cannondale": ["caad10","caad13","supersix","synapse","topstone","systemsix"],
     "trek":       ["emonda","domane","madone","checkpoint"],
     "specialized":["tarmac","roubaix","allez","diverge","aethos"],
     "giant":      ["tcr","defy","contend","propel"],
@@ -167,13 +169,32 @@ def make_id(source: str, raw_id: str) -> str:
 HEADERS = {
     "User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"),
-    "Accept-Language": "pt-BR,pt;q=0.9",
+    "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Cache-Control": "max-age=0",
 }
 
-def get(url: str, retries: int = 3, **kwargs):
+# Headers específicos para Semexe — inclui Referer simulando navegação interna
+HEADERS_SEMEXE = {
+    **HEADERS,
+    "Referer": "https://www.semexe.com/bikes/",
+    "Sec-Ch-Ua": '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+    "Sec-Ch-Ua-Mobile": "?0",
+    "Sec-Ch-Ua-Platform": '"macOS"',
+}
+
+def get(url: str, retries: int = 3, headers: dict = None, **kwargs):
+    h = headers or HEADERS
     for attempt in range(retries):
         try:
-            r = requests.get(url, headers=HEADERS, timeout=20, **kwargs)
+            r = requests.get(url, headers=h, timeout=20, **kwargs)
             if r.status_code == 200:
                 return r
             log.warning(f"HTTP {r.status_code} em {url} (tentativa {attempt+1})")
@@ -572,8 +593,11 @@ def passes_filters(attrs: dict, category: str) -> tuple[bool, str]:
             return False, f"grupo insuficiente: {grupo}"
 
         ano = attrs.get("year")
-        if ano and ano < FILTROS_SPEED["ano_min"]:
-            return False, f"ano muito antigo: {ano}"
+        if ano:
+            mat = attrs.get("material", "aluminio")
+            ano_min = FILTROS_SPEED["ano_min_carb"] if "carbono" in mat else FILTROS_SPEED["ano_min_alu"]
+            if ano < ano_min:
+                return False, f"ano muito antigo: {ano}"
 
         tam = attrs.get("size")
         if tam and tam not in FILTROS_SPEED["tamanhos_ok"] and tam not in ["s","m","l"]:
@@ -598,9 +622,10 @@ def passes_filters(attrs: dict, category: str) -> tuple[bool, str]:
 # ENRIQUECIMENTO COMPLETO DE UM ANÚNCIO
 # ──────────────────────────────────────────────────────────────
 
-def enrich(listing: dict, benchmarks: dict) -> dict | None:
+def enrich(listing: dict, benchmarks: dict, bike_db: dict | None = None) -> dict | None:
     """
     Recebe um anúncio bruto, extrai atributos, aplica filtros e calcula scores.
+    Enriquece com database de modelos se bike_db fornecido.
     Retorna None se eliminado, ou o dict enriquecido com score + vp.
     """
     title = listing.get("title", "")
@@ -630,6 +655,19 @@ def enrich(listing: dict, benchmarks: dict) -> dict | None:
         attrs = {**listing, "category": category, "brand": brand, "material": material,
                  "grupo": grupo or "", "suspensao": susp, "size": size, "weight": weight,
                  "year": year, "nf": nf, "desc": desc}
+
+    # ── Enriquece com database de modelos ──────────────────────
+    if bike_db:
+        try:
+            attrs = enrich_from_db(title, desc, attrs, bike_db)
+            if attrs.get("db_match"):
+                log.debug(f"DB match: {attrs.get('db_model_name')} {attrs.get('db_year_used')} "
+                          f"→ grupo: {attrs.get('grupo')} ({attrs.get('grupo_source')})")
+            elif attrs.get("grupo_nao_confirmado"):
+                log.debug(f"DB sem match, sem grupo: '{title[:50]}' → alerta ativado")
+        except Exception as e:
+            log.warning(f"db_matcher falhou para '{title[:50]}': {e}")
+    # ──────────────────────────────────────────────────────────
 
     ok, reason = passes_filters(attrs, category)
     if not ok:
@@ -712,38 +750,111 @@ def scrape_bazarbikes(endpoints: list) -> list:
     return results
 
 
-def scrape_semexe(urls: list) -> list:
-    results = []
-    for url in urls:
-        log.info(f"Semexe: {url}")
-        r = get(url)
+def _semexe_product_links(listing_url: str) -> list[str]:
+    """Extrai links de produto de uma página de listagem Semexe, com paginação."""
+    links = set()
+    page  = 1
+    while True:
+        url = f"{listing_url}?page={page}" if page > 1 else listing_url
+        r   = get(url, headers=HEADERS_SEMEXE)
         if not r:
-            continue
+            break
         soup = BeautifulSoup(r.text, "html.parser")
-        for card in soup.select(".ty-column3, .product-list-item, [class*='product-item']"):
-            title_el = card.select_one(".product-title, h2, h3, [class*='title']")
-            price_el = card.select_one(".ty-price-num, [class*='price']")
-            link_el  = card.select_one("a[href]")
-            if not title_el:
-                continue
-            title   = title_el.get_text(strip=True)
-            price_s = price_el.get_text(strip=True) if price_el else ""
-            url_ad  = link_el["href"] if link_el else url
-            if url_ad.startswith("/"):
-                url_ad = "https://www.semexe.com" + url_ad
-            prod_id = hashlib.md5(url_ad.encode()).hexdigest()[:12]
-            price_int = parse_price(price_s)
-            results.append({
-                "id":        make_id("semexe", prod_id),
-                "source":    "Semexe",
-                "title":     title,
-                "desc":      "",
-                "price":     price_s or "Consultar",
-                "price_int": price_int,
-                "url":       url_ad,
-                "city":      "São Paulo",
-            })
+        # CS-Cart: links de produto ficam em <a> com href contendo o slug do produto
+        found = 0
+        for a in soup.select("a[href]"):
+            href = a["href"]
+            # URL de produto individual: /bikes/estrada/nome-do-produto/ ou /bikes/mtb/...
+            if re.match(r"https?://www[.]semexe[.]com/bikes/[^/]+/[^/]+/$", href):
+                if href not in links:
+                    links.add(href)
+                    found += 1
+            elif re.match(r"^/bikes/[^/]+/[^/]+/$", href):
+                full = "https://www.semexe.com" + href
+                if full not in links:
+                    links.add(full)
+                    found += 1
+        # Sem novos links nessa página = acabou a paginação
+        if found == 0:
+            break
+        # Verifica se existe "próxima página"
+        next_pg = soup.select_one("a.ty-pagination__next, a[rel='next'], .ty-pagination li.last a")
+        if not next_pg:
+            break
+        page += 1
+        if page > 10:  # teto de segurança: máx 10 páginas por categoria
+            break
         time.sleep(CONFIG["delay"])
+    return list(links)
+
+
+def _semexe_parse_product(url: str) -> dict | None:
+    """
+    Lê uma página de produto Semexe e extrai dados via meta tags OpenGraph.
+    Muito mais confiável que parsear o HTML da grade.
+    """
+    r = get(url, headers=HEADERS_SEMEXE)
+    if not r:
+        return None
+    soup  = BeautifulSoup(r.text, "html.parser")
+
+    def meta(prop: str) -> str:
+        tag = (soup.find("meta", property=prop) or
+               soup.find("meta", attrs={"name": prop}))
+        return tag["content"].strip() if tag and tag.get("content") else ""
+
+    title     = meta("og:title").replace("Semexe - ", "").strip()
+    price_s   = meta("product:price:amount")
+    currency  = meta("product:price:currency")
+    condition = meta("product:condition")   # "used" / "new"
+    desc      = meta("og:description")
+    img       = meta("og:image")
+    prod_id   = meta("product:retailer_item_id") or hashlib.md5(url.encode()).hexdigest()[:12]
+
+    if not title:
+        return None
+
+    price_int = int(float(price_s)) if price_s else None
+    price_fmt = f"R$ {price_int:,}".replace(",", ".") if price_int else "Consultar"
+
+    return {
+        "id":        make_id("semexe", prod_id),
+        "source":    "Semexe",
+        "title":     title,
+        "desc":      desc[:400],
+        "price":     price_fmt,
+        "price_int": price_int,
+        "url":       url,
+        "img":       img,
+        "city":      "São Paulo",
+        "condition": condition,
+    }
+
+
+def scrape_semexe(urls: list) -> list:
+    """
+    Estratégia:
+    1. Varre cada URL de listagem para coletar links de produtos individuais
+    2. Para cada produto, lê as meta tags OpenGraph (dados estruturados, confiáveis)
+    """
+    results = []
+    all_links: set = set()
+
+    for listing_url in urls:
+        log.info(f"Semexe listagem: {listing_url}")
+        links = _semexe_product_links(listing_url)
+        log.info(f"  {len(links)} links de produto encontrados")
+        all_links.update(links)
+        time.sleep(CONFIG["delay"])
+
+    log.info(f"Semexe: {len(all_links)} produtos únicos para processar")
+    for url in all_links:
+        product = _semexe_parse_product(url)
+        if product:
+            results.append(product)
+        time.sleep(CONFIG["delay"])
+
+    log.info(f"Semexe: {len(results)} produtos coletados")
     return results
 
 
@@ -918,14 +1029,19 @@ def render_listing_html(l: dict, rank: int, analysis: str) -> str:
     pct_loja         = l.get("vp_bd",{}).get("pct_desconto_loja","?")
     pct_used         = round((median - l["price_int"]) / median * 100) if (median and l.get("price_int")) else "?"
     mat_label        = "carbono hi-mod" if "himod" in (l.get("material","")) else l.get("material","")
-    grupo_label      = l.get("grupo","—")
+    grupo_src        = l.get("grupo_source","")
+    grupo_raw        = l.get("grupo","—")
+    grupo_label      = f"{grupo_raw} ({'título' if grupo_src=='titulo' else 'DB'})" if grupo_src and grupo_src != "nenhum" else grupo_raw
     susp_label       = l.get("suspensao","—") if cat == "mtb" else None
     size_label       = l.get("size","—")
     year_label       = str(l.get("year","")) if l.get("year") else ""
     nf_label         = "NF" if l.get("nf") else ""
+    db_tag           = f"DB {l.get('db_year_used','')}" if l.get("db_match") else ""
+    alerta_grupo     = "⚠ grupo não confirmado — verificar no anúncio" if l.get("grupo_nao_confirmado") else ""
     sub_parts        = [p for p in [mat_label, f"Tam {size_label}", grupo_label,
-                                     susp_label, year_label, l.get("city",""), nf_label] if p and p != "—"]
-    subtitle         = " · ".join(sub_parts[:6])
+                                     susp_label, year_label, l.get("city",""), nf_label, db_tag] if p and p != "—"]
+    subtitle         = " · ".join(sub_parts[:7])
+    subtitle        += f'<br><span style="font-size:10px;color:#c47c0a;font-weight:500">{alerta_grupo}</span>' if alerta_grupo else ""
 
     # Score breakdown bars
     bd    = l.get("score_bd", {})
@@ -1117,6 +1233,7 @@ def main():
     log.info("Bike Monitor iniciando...")
     seen       = load_seen()
     benchmarks = load_benchmarks()
+    bike_db    = load_db("bikes_database.json")
     log.info(f"IDs já vistos: {len(seen)}")
 
     # Coleta bruta
@@ -1140,7 +1257,7 @@ def main():
     # Enriquece + score
     oportunidades = []
     for l in deduped:
-        enriched = enrich(l, benchmarks)
+        enriched = enrich(l, benchmarks, bike_db)
         if enriched is None:
             continue
         sc = enriched.get("score", 0)
