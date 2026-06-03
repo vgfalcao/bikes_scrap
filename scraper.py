@@ -25,12 +25,12 @@ CONFIG = {
     "email_from":  os.environ.get("EMAIL_FROM",  "seu_email@gmail.com"),
     "email_pass":  os.environ.get("EMAIL_PASS",  ""),
     "email_to":    os.environ.get("EMAIL_TO",    "vgfalcao@gmail.com"),
-    "preco_max":   int(os.environ.get("PRECO_MAX", "10000")),
+    "preco_max":   int(os.environ.get("PRECO_MAX", "25000")),
     "state_file":  "seen_ids.json",
     "bench_file":  "benchmarks.json",
     "delay":       2.5,
-    "score_min":   65,
-    "vp_min":      60,
+    "score_min":   55,
+    "vp_min":      65,
 }
 
 # ──────────────────────────────────────────────────────────────
@@ -95,7 +95,9 @@ FILTROS_MTB = {
 }
 
 KEYWORDS_DESCARTAR = ["infantil","criança","kids","bmx","motorizada","elétrica","eletrica",
-                      "patinete","trotinete","spinning","ergométrica","dobrável","dobravel"]
+                      "patinete","trotinete","spinning","ergométrica","dobrável","dobravel",
+                      "speed levado a serio","mtb levado a serio","mountain bike levado",
+                      "speed levado","levado a sério"]
 
 # ──────────────────────────────────────────────────────────────
 # MAPEAMENTO DE MARCAS → TIERS E MODELOS CONHECIDOS
@@ -181,7 +183,7 @@ HEADERS = {
     "Cache-Control": "max-age=0",
 }
 
-# Headers específicos para Semexe — inclui Referer simulando navegação interna
+# Headers específicos para Semexe
 HEADERS_SEMEXE = {
     **HEADERS,
     "Referer": "https://www.semexe.com/bikes/",
@@ -189,6 +191,86 @@ HEADERS_SEMEXE = {
     "Sec-Ch-Ua-Mobile": "?0",
     "Sec-Ch-Ua-Platform": '"macOS"',
 }
+
+# ── Firecrawl ──────────────────────────────────────────────────
+# Free tier: 1.000 créditos/mês — ~376 créditos/mês para 2x/semana.
+# Cadastro: https://www.firecrawl.dev (Free plan, sem cartão)
+# Adicionar FIRECRAWL_API_KEY nos Secrets do GitHub.
+FIRECRAWL_API_KEY = os.environ.get("FIRECRAWL_API_KEY", "")
+FIRECRAWL_BASE    = "https://api.firecrawl.dev/v1"
+
+def firecrawl_scrape(url: str) -> requests.Response | None:
+    """
+    Usa Firecrawl /scrape para buscar uma URL contornando bloqueios anti-bot.
+    Retorna um objeto Response-like com .text e .status_code para manter
+    compatibilidade com o resto do código.
+    Consome 1 crédito por chamada.
+    """
+    if not FIRECRAWL_API_KEY:
+        return None
+    try:
+        resp = requests.post(
+            f"{FIRECRAWL_BASE}/scrape",
+            headers={
+                "Authorization": f"Bearer {FIRECRAWL_API_KEY}",
+                "Content-Type":  "application/json",
+            },
+            json={
+                "url":     url,
+                "formats": ["markdown","html"],  # markdown para parsing, html como fallback
+                "onlyMainContent": False,
+                "timeout": 20000,
+            },
+            timeout=40,
+        )
+        if resp.status_code != 200:
+            log.warning(f"Firecrawl HTTP {resp.status_code} para {url[:60]}")
+            return None
+        data = resp.json()
+        if not data.get("success"):
+            log.warning(f"Firecrawl erro para {url[:60]}: {data.get('error','?')}")
+            return None
+
+        # Monta objeto compatível com requests.Response
+        class _R:
+            def __init__(self, html, md):
+                self.text        = html or md or ""
+                self.status_code = 200
+            def json(self):
+                import json as _j
+                return _j.loads(self.text)
+
+        html = data.get("data",{}).get("html","")
+        md   = data.get("data",{}).get("markdown","")
+        return _R(html, md)
+    except Exception as e:
+        log.warning(f"Firecrawl exceção para {url[:60]}: {e}")
+        return None
+
+
+def get_proxied(url: str, retries: int = 3, **kwargs):
+    """
+    Tenta Firecrawl primeiro (contorna anti-bot).
+    Se não houver chave ou falhar, tenta requests direto.
+    """
+    # Tenta Firecrawl
+    if FIRECRAWL_API_KEY:
+        r = firecrawl_scrape(url)
+        if r:
+            return r
+        log.warning(f"Firecrawl falhou para {url[:60]} — tentando direto")
+
+    # Fallback: requests direto (funciona para sites sem anti-bot)
+    for attempt in range(retries):
+        try:
+            r = requests.get(url, headers=HEADERS, timeout=20, **kwargs)
+            if r.status_code == 200:
+                return r
+            log.warning(f"HTTP {r.status_code} em {url[:60]} (tentativa {attempt+1})")
+        except Exception as e:
+            log.warning(f"Erro em {url[:60]}: {e} (tentativa {attempt+1})")
+        time.sleep(CONFIG["delay"] * (attempt + 1))
+    return None
 
 def get(url: str, retries: int = 3, headers: dict = None, **kwargs):
     h = headers or HEADERS
@@ -290,6 +372,12 @@ def detect_grupo_mtb(text: str) -> str | None:
 
 def detect_material(text: str) -> str:
     t = norm(text)
+    # Indicadores explícitos de quadro alumínio — têm prioridade
+    # mesmo que o garfo seja carbono (ex: Trek Emonda ALR, CAAD10)
+    alu_signals = ["aluminum","aluminium","alpha aluminum","smartform","ultralight 300",
+                   "ultralight 500","alr","caad","6061","6069","7005","aluminio"]
+    if any(k in t for k in alu_signals):
+        return "aluminio"
     if any(k in t for k in ["carbono","carbon","hi-mod","himod","oclv","ballistec","fact"]):
         if any(k in t for k in ["hi-mod","himod","ballistec","oclv 700","fact 12"]):
             return "carbono_himod"
@@ -382,10 +470,12 @@ def score_speed(attrs: dict, benchmarks: dict) -> tuple[int, dict]:
     mat    = attrs.get("material", "aluminio")
     bench_key = "alu_105"
     if "di2" in norm(grupo) or "etap" in norm(grupo):
-        bench_key = "carbono_di2"
+        bench_key = "carbono_di2" if "carbono" in mat else "alu_ultegra"
     elif any(k in norm(grupo) for k in ["ultegra","force","red"]):
-        bench_key = "carbono_ultegra"
-    elif "carbono" in mat or "carbon" in mat:
+        bench_key = "carbono_ultegra" if "carbono" in mat else "alu_ultegra"
+    elif any(k in norm(grupo) for k in ["rival"]):
+        bench_key = "carbono_105" if "carbono" in mat else "alu_rival"
+    elif "carbono" in mat:
         bench_key = "carbono_105"
 
     cat_bench = benchmarks.get("speed", BENCHMARKS_DEFAULT["speed"])
@@ -600,10 +690,14 @@ def passes_filters(attrs: dict, category: str) -> tuple[bool, str]:
                 return False, f"ano muito antigo: {ano}"
 
         tam = attrs.get("size")
-        if tam and tam not in FILTROS_SPEED["tamanhos_ok"] and tam not in ["s","m","l"]:
-            # tamanho declarado e fora do range
-            if re.match(r"^\d+$", str(tam)) and int(tam) not in range(50, 57):
-                return False, f"tamanho fora do range: {tam}"
+        if tam and tam not in ["s","m","l","xs","xl"]:
+            try:
+                t_int = int(str(tam))
+                # Elimina apenas tamanhos claramente incompatíveis (<47 ou >62)
+                if t_int < 47 or t_int > 62:
+                    return False, f"tamanho fora do range: {tam}"
+            except ValueError:
+                pass
 
     elif category == "mtb":
         grupo = norm(attrs.get("grupo") or "")
@@ -717,7 +811,7 @@ def scrape_bazarbikes(endpoints: list) -> list:
     results = []
     for ep in endpoints:
         log.info(f"BazarBikes: {ep['cat']}")
-        r = get(ep["url"])
+        r = get_proxied(ep["url"])
         if not r:
             continue
         try:
@@ -858,13 +952,117 @@ def scrape_semexe(urls: list) -> list:
     return results
 
 
+BIKEMAGAZINE_URLS = [
+    "https://classificados.bikemagazine.com.br/anuncios/categorias/ciclismo-speed/componente/bikes-completas?ordenar=mais-recentes",
+    "https://classificados.bikemagazine.com.br/anuncios/categorias/ciclismo-mountain-bike/componente/bikes-completas?ordenar=mais-recentes",
+]
+
+
+def scrape_bikemagazine(urls: list) -> list:
+    """
+    Scraper do Bikemagazine Classificados.
+    Extrai links da listagem e lê cada anúncio via meta tags OG.
+    Requer ScraperAPI para funcionar no GitHub Actions.
+    """
+    results = []
+    all_links: set = set()
+
+    for listing_url in urls:
+        page = 1
+        while True:
+            url = f"{listing_url}&pagina={page}" if page > 1 else listing_url
+            log.info(f"Bikemagazine: {url.split('?')[0].split('/')[-2]} p{page}")
+            r = get_proxied(url)
+            if not r:
+                break
+            soup = BeautifulSoup(r.text, "html.parser")
+            # Links de anúncio: /anuncios/NNNNN-slug
+            found = 0
+            for a in soup.find_all("a", href=True):
+                href = a["href"]
+                if re.match(r"https?://classificados\.bikemagazine\.com\.br/anuncios/[0-9]", href):
+                    if href not in all_links:
+                        all_links.add(href)
+                        found += 1
+                elif re.match(r"^/anuncios/[0-9]", href):
+                    full = "https://classificados.bikemagazine.com.br" + href
+                    if full not in all_links:
+                        all_links.add(full)
+                        found += 1
+            log.info(f"  {found} links novos (total {len(all_links)})")
+            if found == 0:
+                break
+            # Verifica paginação
+            next_pg = soup.select_one("a[rel='next'], .pagination .next, [class*='proxima']")
+            if not next_pg:
+                break
+            page += 1
+            if page > 5:
+                break
+            time.sleep(CONFIG["delay"])
+
+    log.info(f"Bikemagazine: {len(all_links)} anúncios únicos para processar")
+
+    for url in all_links:
+        r = get_proxied(url)
+        if not r:
+            continue
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        def meta(prop):
+            tag = soup.find("meta", property=prop) or soup.find("meta", attrs={"name": prop})
+            return tag["content"].strip() if tag and tag.get("content") else ""
+
+        title     = meta("og:title").strip()
+        desc_raw  = meta("og:description").strip()
+        img       = meta("og:image")
+
+        if not title or title.lower() == "classificados bikemagazine":
+            time.sleep(CONFIG["delay"])
+            continue
+
+        # Preço: busca no HTML — aparece como "R$ 6.499,00"
+        price_el = soup.select_one("[class*='preco'], [class*='price'], h2 ~ p strong, .valor")
+        price_s  = ""
+        if price_el:
+            price_s = price_el.get_text(strip=True)
+        else:
+            # Fallback: busca no texto completo da página
+            m = re.search(r"R[$]\s*([0-9.,]+)", r.text)
+            if m:
+                price_s = "R$ " + m.group(1)
+
+        price_int = parse_price(price_s)
+        ad_id     = re.search(r"/anuncios/([0-9]+)", url)
+        ad_id     = ad_id.group(1) if ad_id else hashlib.md5(url.encode()).hexdigest()[:10]
+
+        # Cidade do anunciante
+        city_el = soup.select_one("[class*='cidade'], [class*='city'], td:contains('Cidade') + td")
+        city    = city_el.get_text(strip=True) if city_el else ""
+
+        results.append({
+            "id":        make_id("bikemagazine", ad_id),
+            "source":    "Bikemagazine",
+            "title":     title,
+            "desc":      desc_raw[:400],
+            "price":     price_s or "A combinar",
+            "price_int": price_int,
+            "url":       url,
+            "city":      city,
+        })
+        time.sleep(CONFIG["delay"])
+
+    log.info(f"Bikemagazine: {len(results)} anúncios coletados")
+    return results
+
+
 def scrape_olx(queries: list) -> list:
     results = []
     base = "https://www.olx.com.br/brasil/esportes-e-lazer/bicicletas"
     for query in queries:
         url = f"{base}?q={requests.utils.quote(query)}&sf=1"
         log.info(f"OLX: '{query}'")
-        r = get(url)
+        r = get_proxied(url)
         if not r:
             continue
         soup = BeautifulSoup(r.text, "html.parser")
@@ -1240,6 +1438,7 @@ def main():
     # Coleta bruta
     raw = []
     raw.extend(scrape_bazarbikes(BAZARBIKES_ENDPOINTS))
+    raw.extend(scrape_bikemagazine(BIKEMAGAZINE_URLS))
     raw.extend(scrape_semexe(SEMEXE_URLS))
     raw.extend(scrape_olx(BUSCA_OLX))
     log.info(f"Total bruto coletado: {len(raw)}")

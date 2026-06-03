@@ -219,11 +219,20 @@ def enrich_from_db(title: str, desc: str, attrs: dict, db: dict) -> dict:
 
     grupo_final, grupo_source = resolve_grupo(grupo_titulo, grupo_oem, category)
 
-    # Enriquece material se não detectado ou se database é mais específico
+    # Enriquece material — database só sobrescreve se título/desc
+    # NÃO contiver sinal explícito de alumínio.
+    # Razão: "Trek Émonda ALR" tem "alr" → alumínio correto.
+    # O DB mapearia como carbono (último ano) e inflaria o score.
     mat_db    = ano_data.get("material", "")
     mat_atual = attrs.get("material", "aluminio")
-    if mat_db and (mat_atual == "aluminio" and "carbono" in mat_db):
-        attrs["material"] = mat_db  # database corrige subestimação
+    text_full = norm(attrs.get("title","") + " " + attrs.get("desc",""))
+    alu_explicit = any(k in text_full for k in [
+        "aluminum","aluminium","alpha aluminum","smartform",
+        "ultralight 300","ultralight 500","alr","caad",
+        "6061","6069","7005","aluminio"
+    ])
+    if mat_db and (mat_atual == "aluminio" and "carbono" in mat_db) and not alu_explicit:
+        attrs["material"] = mat_db  # database corrige apenas quando não há sinal explícito de alu
 
     # Peso: usa database se não declarado no título
     peso_db = ano_data.get("peso_kg")
