@@ -1,0 +1,2186 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "updated_at": "2025-06-03",
+    "description": "Database de modelos de bikes speed e MTB tier A e B, 2010+. Usado pelo scraper para enriquecer anúncios sem grupo declarado no título.",
+    "logica_grupo": "título vence se grupo declarado for MELHOR que OEM; database vence se for PIOR. Sem ano no título: usa último ano mapeado. Sem match E sem grupo: passa com alerta.",
+    "grupo_ranking": {
+      "speed": [
+        "dura-ace di2",
+        "ultegra di2",
+        "105 di2",
+        "sram red etap",
+        "sram force etap",
+        "dura-ace",
+        "ultegra r8100",
+        "ultegra r8000",
+        "ultegra",
+        "sram force",
+        "105 r7100",
+        "105 r7000",
+        "sram rival etap",
+        "105 5800",
+        "sram rival",
+        "tiagra",
+        "sora"
+      ],
+      "mtb": [
+        "xtr m9100",
+        "xx1 axs",
+        "xx1 eagle",
+        "x01 axs",
+        "x01 eagle",
+        "xt m8100",
+        "xt m8000",
+        "gx eagle",
+        "slx m7100",
+        "nx eagle",
+        "deore m6100",
+        "deore m5100",
+        "deore m4100",
+        "alivio",
+        "acera",
+        "altus"
+      ]
+    }
+  },
+  "speed": {
+    "cannondale_supersix_evo": {
+      "marca": "cannondale",
+      "modelo": "SuperSix EVO",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "supersix evo",
+        "supersix",
+        "super six evo",
+        "super six",
+        "cnd supersix",
+        "cannondale evo",
+        "supersix hi-mod",
+        "supersix himod",
+        "supersix lab71",
+        "supersix 2",
+        "supersix 3",
+        "supersix 4",
+        "supersix 5",
+        "cannondal supersix",
+        "cannondale super six"
+      ],
+      "anos": {
+        "2012": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2013": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.5,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        }
+      },
+      "notas": "Hi-Mod: +1 nível de grupo OEM. Lab71: topo de linha. Verificar título para diferenciar versões."
+    },
+    "cannondale_caad10": {
+      "marca": "cannondale",
+      "modelo": "CAAD10",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "caad10",
+        "caad 10",
+        "caad-10",
+        "cannondale aluminio",
+        "cannondale road alu",
+        "cnd caad10",
+        "cannondal caad10"
+      ],
+      "anos": {
+        "2011": {
+          "material": "aluminio",
+          "grupo_oem": "105 5700",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2012": {
+          "material": "aluminio",
+          "grupo_oem": "105 5700",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2013": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        },
+        "2014": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.3,
+          "freio": "rim"
+        }
+      },
+      "notas": "Descontinuado em 2018. Substituído pelo CAAD13. Garfo carbono em todos os anos."
+    },
+    "cannondale_caad13": {
+      "marca": "cannondale",
+      "modelo": "CAAD13",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "caad13",
+        "caad 13",
+        "caad-13",
+        "cnd caad13",
+        "cannondal caad13"
+      ],
+      "anos": {
+        "2020": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        }
+      },
+      "notas": "Alumínio 6069 SmartForm C1. Garfo carbono. Disc em todos os anos."
+    },
+    "cannondale_synapse": {
+      "marca": "cannondale",
+      "modelo": "Synapse",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "synapse carbon",
+        "synapse carbono",
+        "synapse hi-mod",
+        "synapse endurance"
+      ],
+      "anos": {
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.8,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.8,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.8,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.7,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.7,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.7,
+          "freio": "disc"
+        }
+      },
+      "notas": "Endurance. Geometria mais ereta que SuperSix."
+    },
+    "trek_emonda": {
+      "marca": "trek",
+      "modelo": "Émonda",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "emonda",
+        "émonda",
+        "emonda slr",
+        "emonda sl",
+        "emonda alr",
+        "emonda s",
+        "trek emonda",
+        "emonda 5",
+        "emonda 6",
+        "emonda 7",
+        "trek emonda sl",
+        "trek emonda slr",
+        "trek emonda alr"
+      ],
+      "anos": {
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.5,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.5,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.5,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.5,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.6,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.6,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        }
+      },
+      "notas": "ALR = alumínio (OCLV 500 = carbono entry, OCLV 700/800 = carbono premium). SLR = topo."
+    },
+    "trek_domane": {
+      "marca": "trek",
+      "modelo": "Domane",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "domane sl",
+        "domane slr",
+        "domane alr",
+        "trek domane",
+        "domane endurance"
+      ],
+      "anos": {
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.8,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.8,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.8,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.8,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.7,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.0,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.0,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.0,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.9,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.9,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.9,
+          "freio": "disc"
+        }
+      },
+      "notas": "Endurance com IsoSpeed. ALR = alumínio."
+    },
+    "specialized_tarmac": {
+      "marca": "specialized",
+      "modelo": "Tarmac",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "tarmac sl6",
+        "tarmac sl7",
+        "tarmac sl8",
+        "tarmac pro",
+        "tarmac expert",
+        "tarmac comp",
+        "tarmac sport",
+        "s-works tarmac",
+        "tarmac carbono",
+        "tarmac specialized",
+        "specialized sl7",
+        "specialized sl8",
+        "specialized sl6",
+        "s-works sl7"
+      ],
+      "anos": {
+        "2012": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2013": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        }
+      },
+      "notas": "SL4=2012-15, SL5=2015-18, SL6=2018-20, SL7=2020-23, SL8=2023+."
+    },
+    "specialized_allez": {
+      "marca": "specialized",
+      "modelo": "Allez",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "allez sprint",
+        "allez e5",
+        "allez expert",
+        "allez comp",
+        "specialized allez"
+      ],
+      "anos": {
+        "2014": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.8,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.8,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.8,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.7,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2020": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2021": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2022": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        }
+      },
+      "notas": "Allez Sprint = carbono (FACT). Allez E5 = alumínio. Verificar variante no título."
+    },
+    "giant_tcr": {
+      "marca": "giant",
+      "modelo": "TCR Advanced",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "tcr advanced",
+        "tcr advanced pro",
+        "tcr advanced sl",
+        "tcr advanced 0",
+        "tcr advanced 1",
+        "tcr advanced 2",
+        "giant tcr",
+        "tcr pro",
+        "tcr sl",
+        "giant tcr advanced",
+        "tcr advanced pro 0"
+      ],
+      "anos": {
+        "2012": {
+          "material": "carbono",
+          "grupo_oem": "105 5700",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2013": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.7,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.7,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.8,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        }
+      },
+      "notas": "Advanced SL = carbono hi-mod (mais leve). Advanced Pro = carbono standard."
+    },
+    "scott_addict": {
+      "marca": "scott",
+      "modelo": "Addict RC",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "addict rc",
+        "addict 10",
+        "addict 20",
+        "addict 30",
+        "scott addict",
+        "addict ultimate",
+        "addict pro",
+        "addict hmx"
+      ],
+      "anos": {
+        "2013": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 7.8,
+          "freio": "rim"
+        },
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 7.8,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 7.7,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.7,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.7,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.6,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        }
+      },
+      "notas": "HMX SL = hi-mod topo. HMX = carbono premium. HMF = carbono entry."
+    },
+    "pinarello_dogma": {
+      "marca": "pinarello",
+      "modelo": "Dogma",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "dogma f",
+        "dogma f8",
+        "dogma f10",
+        "dogma f12",
+        "dogma f14",
+        "pinarello dogma",
+        "dogma x",
+        "dogma 65.1"
+      ],
+      "anos": {
+        "2012": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace",
+          "peso_kg": 7.0,
+          "freio": "rim"
+        },
+        "2013": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace",
+          "peso_kg": 7.0,
+          "freio": "rim"
+        },
+        "2014": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace",
+          "peso_kg": 6.9,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace",
+          "peso_kg": 6.9,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace",
+          "peso_kg": 6.9,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace di2",
+          "peso_kg": 6.8,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace di2",
+          "peso_kg": 6.8,
+          "freio": "disc"
+        },
+        "2019": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace di2",
+          "peso_kg": 6.9,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace di2",
+          "peso_kg": 6.9,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace di2",
+          "peso_kg": 6.9,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace di2",
+          "peso_kg": 6.8,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace di2",
+          "peso_kg": 6.8,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono_himod",
+          "grupo_oem": "dura-ace di2",
+          "peso_kg": 6.8,
+          "freio": "disc"
+        }
+      },
+      "notas": "Topo absoluto Pinarello. F14 = geração atual."
+    },
+    "pinarello_f4": {
+      "marca": "pinarello",
+      "modelo": "F4:13",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "f4:13",
+        "f4 13",
+        "pinarello f4",
+        "pinarello f series",
+        "pinarello gan",
+        "gan s",
+        "gan rs",
+        "paris",
+        "fp3",
+        "fp5",
+        "fp7",
+        "pinarello f",
+        "pinarello road",
+        "pinarello paris",
+        "pinarello fp"
+      ],
+      "anos": {
+        "2010": {
+          "material": "carbono",
+          "grupo_oem": "105 5700",
+          "peso_kg": 8.2,
+          "freio": "rim"
+        },
+        "2011": {
+          "material": "carbono",
+          "grupo_oem": "105 5700",
+          "peso_kg": 8.2,
+          "freio": "rim"
+        },
+        "2012": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2013": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        }
+      },
+      "notas": "Linha intermediária Pinarello. F4:13 = 2012-2014. Gan S/RS = 2016+. Muito comum no mercado usado BR."
+    },
+    "cervelo_r3": {
+      "marca": "cervelo",
+      "modelo": "R3",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "cervelo r3",
+        "cervelo r5",
+        "cervelo s3",
+        "cervelo s5",
+        "cervelo r series",
+        "cervelo s series"
+      ],
+      "anos": {
+        "2013": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.4,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.4,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        }
+      },
+      "notas": "R5 = topo. S3/S5 = aero. R3 = all-round mais comum no usado BR."
+    },
+    "bmc_teammachine": {
+      "marca": "bmc",
+      "modelo": "Teammachine SLR",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "teammachine slr",
+        "teammachine slr01",
+        "teammachine slr02",
+        "teammachine slr03",
+        "bmc slr",
+        "bmc teammachine",
+        "bmc road"
+      ],
+      "anos": {
+        "2013": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.2,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        }
+      },
+      "notas": "SLR01 = topo. SLR02/03 = intermediários. Anos pares dominam no Brasil."
+    },
+    "merida_scultura": {
+      "marca": "merida",
+      "modelo": "Scultura",
+      "tier": "B",
+      "categoria": "speed",
+      "aliases": [
+        "scultura 400",
+        "scultura 5000",
+        "scultura 9000",
+        "scultura team",
+        "merida scultura",
+        "scultura cf4",
+        "scultura cf5"
+      ],
+      "anos": {
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.1,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.1,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        }
+      },
+      "notas": "CF4 = carbono entry. CF5 = carbono mid. CF4-pro/CF5-pro = topo. Comum no mercado SP."
+    },
+    "cube_agree": {
+      "marca": "cube",
+      "modelo": "Agree C:62",
+      "tier": "B",
+      "categoria": "speed",
+      "aliases": [
+        "agree c62",
+        "agree c:62",
+        "cube agree",
+        "agree pro",
+        "agree sl",
+        "agree race"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.3,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.3,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.4,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.4,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.3,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.3,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        }
+      },
+      "notas": "C:62 Race = topo de linha Cube road."
+    }
+  },
+  "mtb": {
+    "specialized_stumpjumper": {
+      "marca": "specialized",
+      "modelo": "Stumpjumper",
+      "tier": "A",
+      "categoria": "mtb",
+      "aliases": [
+        "stumpjumper",
+        "stumpy",
+        "stumjumper",
+        "stumpjumper evo",
+        "stumpjumper comp",
+        "stumpjumper expert",
+        "stumpjumper pro",
+        "s-works stumpjumper",
+        "stumpjumper alloy",
+        "stumpjumper carbon",
+        "stumpjumper 29",
+        "stumpy evo",
+        "stumpjumper 15",
+        "specialized stumpy",
+        "specialized stump"
+      ],
+      "anos": {
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "rockshox pike",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 11.8,
+          "canote_retratil": false
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "rockshox pike",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.6,
+          "canote_retratil": true
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.5,
+          "canote_retratil": true
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.4,
+          "canote_retratil": true
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.3,
+          "canote_retratil": true
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.3,
+          "canote_retratil": true
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.2,
+          "canote_retratil": true
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.1,
+          "canote_retratil": true
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.0,
+          "canote_retratil": true
+        }
+      },
+      "notas": "EVO = geometria mais agressiva (slack). Alloy = alumínio, mesmo spec de grupo."
+    },
+    "trek_fuel_ex": {
+      "marca": "trek",
+      "modelo": "Fuel EX",
+      "tier": "A",
+      "categoria": "mtb",
+      "aliases": [
+        "fuel ex",
+        "fuel ex 5",
+        "fuel ex 7",
+        "fuel ex 8",
+        "fuel ex 9",
+        "fuel ex 9.7",
+        "fuel ex 9.8",
+        "fuel ex 9.9",
+        "trek fuel",
+        "trek fuel ex",
+        "fuel ex gen",
+        "trek fuel 29",
+        "trek trail 29"
+      ],
+      "anos": {
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "rockshox pike",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 12.1,
+          "canote_retratil": false
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.9,
+          "canote_retratil": true
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.8,
+          "canote_retratil": true
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.6,
+          "canote_retratil": true
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.6,
+          "canote_retratil": true
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.5,
+          "canote_retratil": true
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "slx m7100",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.8,
+          "canote_retratil": true
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "slx m7100",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.8,
+          "canote_retratil": true
+        }
+      },
+      "notas": "9.8/9.9 = XT ou XTR. 9.7 = SLX/XT. 8 e abaixo = alumínio. Gen 5 = 2020+."
+    },
+    "santa_cruz_hightower": {
+      "marca": "santa cruz",
+      "modelo": "Hightower",
+      "tier": "A",
+      "categoria": "mtb",
+      "aliases": [
+        "hightower",
+        "hightower lt",
+        "hightower cc",
+        "hightower c",
+        "santa cruz hightower",
+        "hightower 29"
+      ],
+      "anos": {
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "rockshox pike",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.9,
+          "canote_retratil": true
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.8,
+          "canote_retratil": true
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.7,
+          "canote_retratil": true
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.6,
+          "canote_retratil": true
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.5,
+          "canote_retratil": true
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.4,
+          "canote_retratil": true
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.3,
+          "canote_retratil": true
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.3,
+          "canote_retratil": true
+        }
+      },
+      "notas": "CC = carbono hi-mod. C = carbono standard. LT = long travel (160mm)."
+    },
+    "scott_spark": {
+      "marca": "scott",
+      "modelo": "Spark",
+      "tier": "A",
+      "categoria": "mtb",
+      "aliases": [
+        "spark rc",
+        "spark 900",
+        "spark 700",
+        "spark 600",
+        "scott spark",
+        "spark team",
+        "spark pro",
+        "spark expert"
+      ],
+      "anos": {
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "fox 32 factory",
+          "viagem_mm": 100,
+          "aro": 29,
+          "peso_kg": 10.9,
+          "canote_retratil": false
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "fox 32 factory",
+          "viagem_mm": 100,
+          "aro": 29,
+          "peso_kg": 10.8,
+          "canote_retratil": true
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 32 factory",
+          "viagem_mm": 100,
+          "aro": 29,
+          "peso_kg": 10.7,
+          "canote_retratil": true
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 32 factory",
+          "viagem_mm": 120,
+          "aro": 29,
+          "peso_kg": 10.6,
+          "canote_retratil": true
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 32 factory",
+          "viagem_mm": 120,
+          "aro": 29,
+          "peso_kg": 10.5,
+          "canote_retratil": true
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 32 factory",
+          "viagem_mm": 120,
+          "aro": 29,
+          "peso_kg": 10.5,
+          "canote_retratil": true
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 32 factory",
+          "viagem_mm": 120,
+          "aro": 29,
+          "peso_kg": 10.4,
+          "canote_retratil": true
+        }
+      },
+      "notas": "XC/trail. RC = race carbon (mais leve). Viagem curta vs. Genius (trail)."
+    },
+    "sense_exper": {
+      "marca": "sense",
+      "modelo": "Exper",
+      "tier": "B",
+      "categoria": "mtb",
+      "aliases": [
+        "exper carbon",
+        "exper carbono",
+        "sense exper",
+        "sense impact evo",
+        "impact evo",
+        "impact carbon",
+        "sense impact",
+        "exper evo",
+        "impact evo carbon"
+      ],
+      "anos": {
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "slx m7100",
+          "suspensao": "rockshox pike",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 12.1,
+          "canote_retratil": true
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "slx m7100",
+          "suspensao": "rockshox pike",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 12.0,
+          "canote_retratil": true
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 11.9,
+          "canote_retratil": true
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 11.8,
+          "canote_retratil": true
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 11.7,
+          "canote_retratil": true
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 11.6,
+          "canote_retratil": true
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 11.5,
+          "canote_retratil": true
+        }
+      },
+      "notas": "Principal MTB carbono nacional premium. Muito comum no mercado usado SP."
+    },
+    "sense_react": {
+      "marca": "sense",
+      "modelo": "React",
+      "tier": "B",
+      "categoria": "mtb",
+      "aliases": [
+        "react sport",
+        "react evo",
+        "react pro",
+        "sense react",
+        "react 29"
+      ],
+      "anos": {
+        "2018": {
+          "material": "aluminio",
+          "grupo_oem": "deore m6100",
+          "suspensao": "rockshox recon",
+          "viagem_mm": 120,
+          "aro": 29,
+          "peso_kg": 13.5,
+          "canote_retratil": false
+        },
+        "2019": {
+          "material": "aluminio",
+          "grupo_oem": "deore m6100",
+          "suspensao": "rockshox recon",
+          "viagem_mm": 120,
+          "aro": 29,
+          "peso_kg": 13.4,
+          "canote_retratil": false
+        },
+        "2020": {
+          "material": "aluminio",
+          "grupo_oem": "slx m7100",
+          "suspensao": "rockshox recon rl",
+          "viagem_mm": 120,
+          "aro": 29,
+          "peso_kg": 13.2,
+          "canote_retratil": false
+        },
+        "2021": {
+          "material": "aluminio",
+          "grupo_oem": "slx m7100",
+          "suspensao": "rockshox recon rl",
+          "viagem_mm": 120,
+          "aro": 29,
+          "peso_kg": 13.2,
+          "canote_retratil": false
+        },
+        "2022": {
+          "material": "aluminio",
+          "grupo_oem": "slx m7100",
+          "suspensao": "rockshox recon rl",
+          "viagem_mm": 130,
+          "aro": 29,
+          "peso_kg": 13.0,
+          "canote_retratil": false
+        },
+        "2023": {
+          "material": "aluminio",
+          "grupo_oem": "slx m7100",
+          "suspensao": "rockshox recon rl",
+          "viagem_mm": 130,
+          "aro": 29,
+          "peso_kg": 12.9,
+          "canote_retratil": false
+        },
+        "2024": {
+          "material": "aluminio",
+          "grupo_oem": "slx m7100",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 130,
+          "aro": 29,
+          "peso_kg": 12.8,
+          "canote_retratil": false
+        },
+        "2025": {
+          "material": "aluminio",
+          "grupo_oem": "deore m6100",
+          "suspensao": "sentec remote lock",
+          "viagem_mm": 100,
+          "aro": 29,
+          "peso_kg": 13.6,
+          "canote_retratil": false
+        }
+      },
+      "notas": "Bike atual do Victor (MY25). Tier C para scoring mas tier B para a marca."
+    },
+    "oggi_big_wheel": {
+      "marca": "oggi",
+      "modelo": "Big Wheel",
+      "tier": "B",
+      "categoria": "mtb",
+      "aliases": [
+        "big wheel 7.3",
+        "big wheel 7.4",
+        "big wheel 7.5",
+        "big wheel 7.6",
+        "big wheel carbon",
+        "oggi big wheel",
+        "oggi bw",
+        "hoje big wheel"
+      ],
+      "anos": {
+        "2015": {
+          "material": "aluminio",
+          "grupo_oem": "slx m7100",
+          "suspensao": "rockshox recon",
+          "viagem_mm": 120,
+          "aro": 29,
+          "peso_kg": 13.8,
+          "canote_retratil": false
+        },
+        "2017": {
+          "material": "aluminio",
+          "grupo_oem": "slx m7100",
+          "suspensao": "rockshox pike",
+          "viagem_mm": 130,
+          "aro": 29,
+          "peso_kg": 13.5,
+          "canote_retratil": true
+        },
+        "2019": {
+          "material": "aluminio",
+          "grupo_oem": "xt m8100",
+          "suspensao": "rockshox pike",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 13.2,
+          "canote_retratil": true
+        },
+        "2020": {
+          "material": "aluminio",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 13.0,
+          "canote_retratil": true
+        },
+        "2021": {
+          "material": "aluminio",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 12.9,
+          "canote_retratil": true
+        },
+        "2022": {
+          "material": "aluminio",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 12.8,
+          "canote_retratil": true
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 12.0,
+          "canote_retratil": true
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 11.8,
+          "canote_retratil": true
+        }
+      },
+      "notas": "Oggi nacional mais popular no mercado usado SP. 7.4+ = versões superiores."
+    },
+    "caloi_elite_carbon": {
+      "marca": "caloi",
+      "modelo": "Elite Carbon",
+      "tier": "B",
+      "categoria": "mtb",
+      "aliases": [
+        "elite carbon team",
+        "elite carbon pro",
+        "caloi elite carbon",
+        "caloi elite",
+        "elite aro 29"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "slx m7100",
+          "suspensao": "rockshox pike",
+          "viagem_mm": 120,
+          "aro": 29,
+          "peso_kg": 12.5,
+          "canote_retratil": false
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 rhythm",
+          "viagem_mm": 120,
+          "aro": 29,
+          "peso_kg": 12.2,
+          "canote_retratil": true
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 130,
+          "aro": 29,
+          "peso_kg": 12.0,
+          "canote_retratil": true
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 130,
+          "aro": 29,
+          "peso_kg": 11.8,
+          "canote_retratil": true
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 130,
+          "aro": 29,
+          "peso_kg": 11.7,
+          "canote_retratil": true
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 130,
+          "aro": 29,
+          "peso_kg": 11.6,
+          "canote_retratil": true
+        }
+      },
+      "notas": "Principal MTB carbono Caloi. Team = topo. Comum no mercado SP."
+    },
+    "canyon_neuron": {
+      "marca": "canyon",
+      "modelo": "Neuron",
+      "tier": "A",
+      "categoria": "mtb",
+      "aliases": [
+        "neuron cf",
+        "neuron al",
+        "canyon neuron",
+        "neuron 7",
+        "neuron 8",
+        "neuron 9",
+        "neuron cf 7",
+        "neuron cf 8"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "rockshox pike",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 11.8,
+          "canote_retratil": true
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "xt m8000",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 140,
+          "aro": 29,
+          "peso_kg": 11.7,
+          "canote_retratil": true
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "xt m8100",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.6,
+          "canote_retratil": true
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.5,
+          "canote_retratil": true
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.4,
+          "canote_retratil": true
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "sram gx eagle",
+          "suspensao": "fox 34 factory",
+          "viagem_mm": 150,
+          "aro": 29,
+          "peso_kg": 11.4,
+          "canote_retratil": true
+        }
+      },
+      "notas": "Importação direta Canyon BR dobra o preço. Usado é excelente custo-benefício."
+    }
+  }
+}
