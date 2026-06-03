@@ -1230,6 +1230,7 @@ def send_email(listings: list, benchmarks: dict, total_analyzed: int):
 # ──────────────────────────────────────────────────────────────
 
 def main():
+    diag = os.environ.get("DIAG", "0") == "1"  # ativa via secret DIAG=1
     log.info("Bike Monitor iniciando...")
     seen       = load_seen()
     benchmarks = load_benchmarks()
@@ -1243,6 +1244,11 @@ def main():
     raw.extend(scrape_olx(BUSCA_OLX))
     log.info(f"Total bruto coletado: {len(raw)}")
 
+    if diag:
+        log.info("── DIAGNÓSTICO: primeiros 10 anúncios coletados ──")
+        for l in raw[:10]:
+            log.info(f"  [{l['source']}] {l['title'][:70]} | {l['price']}")
+
     # Filtra novos
     novos = [l for l in raw if l["id"] not in seen]
     log.info(f"Novos (não vistos antes): {len(novos)}")
@@ -1254,18 +1260,62 @@ def main():
             deduped.append(l)
             ids_batch.add(l["id"])
 
-    # Enriquece + score
-    oportunidades = []
+    log.info(f"Após deduplicação: {len(deduped)} anúncios para avaliar")
+
+    # Enriquece + score — com diagnóstico detalhado
+    oportunidades  = []
+    filtrados      = []   # eliminados por filtro
+    abaixo_thresh  = []   # passaram filtro mas score/vp baixo
+
     for l in deduped:
         enriched = enrich(l, benchmarks, bike_db)
+
         if enriched is None:
+            filtrados.append(l)
             continue
+
         sc = enriched.get("score", 0)
         vp = enriched.get("vp", 0)
+
         if sc >= CONFIG["score_min"] and vp >= CONFIG["vp_min"]:
             oportunidades.append(enriched)
+        else:
+            abaixo_thresh.append(enriched)
 
-    log.info(f"Oportunidades (score≥{CONFIG['score_min']} AND VP≥{CONFIG['vp_min']}): {len(oportunidades)}")
+    # ── Resumo sempre visível nos logs ──────────────────────────
+    log.info(f"")
+    log.info(f"══ RESULTADO ═══════════════════════════════════════")
+    log.info(f"  Coletados:         {len(raw)}")
+    log.info(f"  Novos (não vistos):{len(novos)}")
+    log.info(f"  Deduplicados:      {len(deduped)}")
+    log.info(f"  Eliminados filtro: {len(filtrados)}")
+    log.info(f"  Abaixo threshold:  {len(abaixo_thresh)}")
+    log.info(f"  OPORTUNIDADES:     {len(oportunidades)}")
+    log.info(f"═════════════════════════════════════════════════════")
+
+    # ── Diagnóstico: mostra POR QUÊ cada anúncio foi eliminado ──
+    if diag or (len(oportunidades) == 0 and len(deduped) > 0):
+        log.info("")
+        log.info("── DIAGNÓSTICO: anúncios eliminados por filtro (primeiros 15) ──")
+        for l in filtrados[:15]:
+            log.info(f"  FILTRADO | [{l['source']}] {l['title'][:65]}")
+
+        log.info("")
+        log.info("── DIAGNÓSTICO: anúncios abaixo do threshold (primeiros 20) ──")
+        for e in sorted(abaixo_thresh, key=lambda x: x.get("score",0), reverse=True)[:20]:
+            sc = e.get("score",0)
+            vp = e.get("vp",0)
+            gr = e.get("grupo","—")
+            gr_src = e.get("grupo_source","")
+            db_match = "DB✓" if e.get("db_match") else "DB✗"
+            alerta = " ⚠GRUPO?" if e.get("grupo_nao_confirmado") else ""
+            log.info(f"  score={sc:3d} vp={vp:3d} {db_match}{alerta} | grupo={gr[:20]} ({gr_src}) | [{e['source']}] {e['title'][:55]}")
+
+        if oportunidades:
+            log.info("")
+            log.info("── DIAGNÓSTICO: oportunidades encontradas ──")
+            for e in oportunidades:
+                log.info(f"  score={e.get('score')} vp={e.get('vp')} | {e['title'][:60]} | {e['price']}")
 
     if oportunidades:
         send_email(oportunidades, benchmarks, len(deduped))
