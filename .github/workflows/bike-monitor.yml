@@ -68,6 +68,7 @@ jobs:
           EMAIL_TO:          ${{ secrets.EMAIL_TO }}
           PRECO_MAX:         ${{ secrets.PRECO_MAX }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DIAG: ${{ secrets.DIAG }}
         run: |
           python scraper.py
 
