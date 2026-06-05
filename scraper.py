@@ -1112,6 +1112,76 @@ def scrape_olx(queries: list) -> list:
     return results
 
 
+
+# ──────────────────────────────────────────────────────────────
+# SCORE CONDICIONAL — preço negociado (10% e 20% de desconto)
+# ──────────────────────────────────────────────────────────────
+
+def calc_score_negociado(enriched: dict, benchmarks: dict, desconto_pct: float) -> tuple[int, int]:
+    """
+    Recalcula score e VP com preço negociado (desconto_pct = 0.10 ou 0.20).
+    Retorna (score_negociado, vp_negociado).
+    Mantém todos os outros atributos iguais — só o preço muda.
+    """
+    preco_orig = enriched.get("price_int")
+    if not preco_orig:
+        return enriched.get("score", 0), enriched.get("vp", 0)
+
+    preco_neg = round(preco_orig * (1 - desconto_pct))
+    category  = enriched.get("category", "speed")
+
+    # Cria cópia com preço negociado
+    mock = dict(enriched)
+    mock["price_int"] = preco_neg
+    mock["price"]     = f"R$ {preco_neg:,}".replace(",",".")
+
+    if category == "speed":
+        sc, _ = score_speed(mock, benchmarks)
+    else:
+        sc, _ = score_mtb(mock, benchmarks)
+
+    _, vp_bd = calc_vp(mock, category, benchmarks)
+    vp = min(vp_bd["desconto_novo"] + vp_bd["spec"], 100)
+
+    return sc, vp
+
+
+def is_oportunidade_condicional(enriched: dict, benchmarks: dict) -> dict | None:
+    """
+    Verifica se o anúncio NÃO passa no score real mas PASSARIA com 10% ou 20% de desconto.
+    Retorna dict com detalhes dos dois cenários, ou None se não for condicional.
+    """
+    sc_real = enriched.get("score", 0)
+    vp_real = enriched.get("vp",    0)
+    score_min = CONFIG["score_min"]
+    vp_min    = CONFIG["vp_min"]
+
+    # Já passa no real → não é condicional
+    if sc_real >= score_min and vp_real >= vp_min:
+        return None
+
+    preco_orig = enriched.get("price_int")
+    if not preco_orig:
+        return None
+
+    sc_10, vp_10 = calc_score_negociado(enriched, benchmarks, 0.10)
+    sc_20, vp_20 = calc_score_negociado(enriched, benchmarks, 0.20)
+
+    passa_10 = sc_10 >= score_min and vp_10 >= vp_min
+    passa_20 = sc_20 >= score_min and vp_20 >= vp_min
+
+    if not passa_10 and not passa_20:
+        return None
+
+    return {
+        "preco_orig":  preco_orig,
+        "preco_10":    round(preco_orig * 0.90),
+        "preco_20":    round(preco_orig * 0.80),
+        "sc_10":       sc_10,  "vp_10": vp_10,  "passa_10": passa_10,
+        "sc_20":       sc_20,  "vp_20": vp_20,  "passa_20": passa_20,
+        "sc_real":     sc_real, "vp_real": vp_real,
+    }
+
 # ──────────────────────────────────────────────────────────────
 # ANÁLISE CLAUDE (opcional)
 # ──────────────────────────────────────────────────────────────
@@ -1273,15 +1343,15 @@ def render_listing_html(l: dict, rank: int, analysis: str) -> str:
     </div>
     <div style="padding:8px 13px">
       <div style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#9b9a94;font-family:monospace;margin-bottom:2px">Mediana usados similares</div>
-      <div style="font-size:14px;font-weight:600;color:#1c1b18">R$ {median:,}".replace(",",".")  if median else "—"</div>
+      <div style="font-size:14px;font-weight:600;color:#1c1b18">{f"R$ {median:,}".replace(",",".") if median else "—"}</div>
     </div>
     <div style="padding:8px 13px;border-right:1px solid #f0eeea;border-top:1px solid #f0eeea">
       <div style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#9b9a94;font-family:monospace;margin-bottom:2px">Novo loja (tier {tier})</div>
-      <div style="font-size:13px;font-weight:600;color:#1c1b18">R$ {novo_loja:,}".replace(",",".") if novo_loja else "—"</div>
+      <div style="font-size:13px;font-weight:600;color:#1c1b18">{f"R$ {novo_loja:,}".replace(",",".") if novo_loja else "—"}</div>
     </div>
     <div style="padding:8px 13px;border-top:1px solid #f0eeea">
       <div style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#9b9a94;font-family:monospace;margin-bottom:2px">Novo ML (melhor preço)</div>
-      <div style="font-size:13px;font-weight:600;color:#1c1b18">R$ {novo_ml:,}".replace(",",".") if novo_ml else "—"</div>
+      <div style="font-size:13px;font-weight:600;color:#1c1b18">{f"R$ {novo_ml:,}".replace(",",".") if novo_ml else "—"}</div>
     </div>
   </div>
   <div style="padding:8px 13px;border-bottom:1px solid #f0eeea">
@@ -1311,7 +1381,81 @@ def render_listing_html(l: dict, rank: int, analysis: str) -> str:
 <div style="height:1px;background:#f0eeea;margin:0 16px 6px"></div>"""
 
 
-def build_email_html(listings: list, run_time: str, total_analyzed: int, benchmarks: dict) -> str:
+
+def render_condicional_html(l: dict, rank: int, cond: dict) -> str:
+    """Card HTML para oportunidade condicional — compacto, badge laranja."""
+    cat              = l.get("category","speed")
+    cat_bg, cat_fg   = CAT_COLORS.get(cat, CAT_COLORS["speed"])
+    src_bg, src_fg   = SOURCE_COLORS.get(l["source"], ("#f0eeea","#444"))
+    tier             = l.get("vp_bd",{}).get("tier","C")
+    tier_bg, tier_fg = TIER_COLORS.get(tier, TIER_COLORS["C"])
+    preco_fmt        = lambda p: f"R$ {p:,}".replace(",",".")
+    grupo_raw        = l.get("grupo","—")
+    mat_label        = "carbono" if "carbono" in l.get("material","") else "alumínio"
+    size_label       = l.get("size","")
+    year_label       = str(l.get("year","")) if l.get("year") else ""
+    city_label       = l.get("city","")
+    sub_parts        = [p for p in [mat_label, f"Tam {size_label}" if size_label else "",
+                                    grupo_raw, year_label, city_label] if p and p != "—"]
+    subtitle         = " · ".join(sub_parts[:5])
+
+    def cenario(label, preco, sc, vp, passa):
+        cor  = "#0b7a6e" if passa else "#9b9a94"
+        icone = "✓" if passa else "✗"
+        return f"""
+        <div style="flex:1;padding:8px 10px;background:{'#f0faf7' if passa else '#f7f6f2'};border-radius:5px;border:1px solid {'#0b7a6e44' if passa else '#e0e0e0'}">
+          <div style="font-size:9px;font-family:monospace;color:#9b9a94;margin-bottom:3px">{label}</div>
+          <div style="font-size:15px;font-weight:700;color:{cor}">{preco_fmt(preco)}</div>
+          <div style="font-size:10px;color:{cor};margin-top:2px">{icone} score {sc} · VP {vp}</div>
+        </div>"""
+
+    c10 = cenario("−10% negociado", cond["preco_10"], cond["sc_10"], cond["vp_10"], cond["passa_10"])
+    c20 = cenario("−20% negociado", cond["preco_20"], cond["sc_20"], cond["vp_20"], cond["passa_20"])
+
+    return f"""
+<div style="margin:0 16px 10px;border:1.5px solid #e8530a44;border-radius:7px;overflow:hidden;background:#fff9f6">
+  <div style="padding:9px 13px 7px;border-bottom:1px solid #f0eeea">
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px;align-items:center">
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:700;font-family:monospace;background:#fff0eb;color:#7a2e00">{rank}</span>
+      <span style="display:inline-block;font-size:9px;padding:2px 7px;border-radius:3px;font-family:monospace;font-weight:500;background:#fff0eb;color:#7a2e00">condicional</span>
+      {chip(l["source"],src_bg,src_fg)} {chip("Tier "+tier,tier_bg,tier_fg)} {chip(cat,cat_bg,cat_fg)}
+    </div>
+    <div style="font-size:13px;font-weight:700;color:#1c1b18;line-height:1.3;margin-bottom:2px">{l["title"]}</div>
+    <div style="font-size:11px;color:#6a6960">{subtitle}</div>
+  </div>
+  <div style="padding:8px 13px;border-bottom:1px solid #f0eeea">
+    <div style="font-size:9px;color:#9b9a94;font-family:monospace;margin-bottom:6px">
+      Preço pedido <strong style="color:#1c1b18">{preco_fmt(cond["preco_orig"])}</strong>
+      · score real {cond["sc_real"]} · VP real {cond["vp_real"]}
+      · abaixo do threshold — passaria com desconto:
+    </div>
+    <div style="display:flex;gap:8px">{c10}{c20}</div>
+  </div>
+  <div style="padding:8px 13px;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:10px;color:#854f0b;line-height:1.5">
+      💬 Sugerir {preco_fmt(cond["preco_10"])} (−10%) {'✓ passa' if cond["passa_10"] else '✗ não passa'}<br>
+      💬 Sugerir {preco_fmt(cond["preco_20"])} (−20%) {'✓ passa' if cond["passa_20"] else '✗ não passa'}
+    </div>
+    <a href="{l["url"]}" style="display:inline-block;background:#e8530a;color:white;font-size:11px;font-weight:700;padding:7px 13px;border-radius:5px;text-decoration:none">Ver e negociar →</a>
+  </div>
+</div>"""
+
+
+
+def render_condicionais_html(items: list) -> str:
+    if not items:
+        return ""
+    blocks = ""
+    for i, (l, cond) in enumerate(sorted(items, key=lambda x: max(x[1]["sc_10"],x[1]["sc_20"]), reverse=True), 1):
+        blocks += render_condicional_html(l, i, cond)
+    return f"""
+    <div style="display:flex;align-items:center;gap:10px;padding:12px 16px 8px;border-bottom:1px solid #f0eeea;border-top:1px solid #f0eeea;margin-top:4px">
+      <span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:#fff0eb;color:#7a2e00">💬 oportunidades condicionais</span>
+      <span style="font-size:11px;color:#9b9a94;font-family:monospace">{len(items)} anúncio{'s' if len(items)>1 else ''} · passam com negociação</span>
+    </div>
+    {blocks}"""
+
+def build_email_html(listings: list, run_time: str, total_analyzed: int, benchmarks: dict, condicionais: list | None = None) -> str:
     n      = len(listings)
     speeds = [l for l in listings if l.get("category") == "speed"]
     mtbs   = [l for l in listings if l.get("category") == "mtb"]
@@ -1373,6 +1517,7 @@ def build_email_html(listings: list, run_time: str, total_analyzed: int, benchma
 
   {render_category(speeds, 'speed')}
   {render_category(mtbs,   'mtb')}
+  {render_condicionais_html(condicionais or [])}
 
   <div style="background:#f7f6f2;padding:12px 24px;border-top:1px solid #edecea;display:flex;justify-content:space-between;align-items:center">
     <div style="font-size:9px;color:#9b9a94;font-family:monospace;line-height:1.7">
@@ -1394,7 +1539,7 @@ def build_email_html(listings: list, run_time: str, total_analyzed: int, benchma
 # ENVIO DE E-MAIL
 # ──────────────────────────────────────────────────────────────
 
-def send_email(listings: list, benchmarks: dict, total_analyzed: int):
+def send_email(listings: list, benchmarks: dict, total_analyzed: int, condicionais: list | None = None):
     if not CONFIG["email_pass"]:
         log.warning("EMAIL_PASS não configurado — imprimindo no stdout")
         for l in listings:
@@ -1405,8 +1550,9 @@ def send_email(listings: list, benchmarks: dict, total_analyzed: int):
 
     now     = datetime.now().strftime("%d/%m/%Y %H:%M")
     n       = len(listings)
-    subject = f"🚴 {n} oportunidade{'s' if n!=1 else ''} — Bike Radar {now}"
-    html    = build_email_html(listings, now, total_analyzed, benchmarks)
+    nc = len(condicionais) if condicionais else 0
+    subject = f"🚴 {n} oportunidade{'s' if n!=1 else ''}{f' + {nc} condicional{chr(105)+chr(115) if nc!=1 else chr(108)}' if nc else ''} — Bike Radar {now}"
+    html    = build_email_html(listings, now, total_analyzed, benchmarks, condicionais)
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
@@ -1491,6 +1637,7 @@ def main():
     log.info(f"  Abaixo threshold:  {len(abaixo_thresh)}")
     log.info(f"  OPORTUNIDADES:     {len(oportunidades)}")
     log.info(f"═════════════════════════════════════════════════════")
+    log.info("── Verificando oportunidades condicionais ──")
 
     # ── Diagnóstico: mostra POR QUÊ cada anúncio foi eliminado ──
     if diag or (len(oportunidades) == 0 and len(deduped) > 0):
@@ -1516,8 +1663,20 @@ def main():
             for e in oportunidades:
                 log.info(f"  score={e.get('score')} vp={e.get('vp')} | {e['title'][:60]} | {e['price']}")
 
-    if oportunidades:
-        send_email(oportunidades, benchmarks, len(deduped))
+    # ── Oportunidades condicionais (não passam real, passam com desconto) ──
+    condicionais = []
+    for e in abaixo_thresh:
+        cond = is_oportunidade_condicional(e, benchmarks)
+        if cond:
+            condicionais.append((e, cond))
+            sc10, vp10 = cond["sc_10"], cond["vp_10"]
+            sc20, vp20 = cond["sc_20"], cond["vp_20"]
+            log.info(f"  CONDICIONAL | −10%: score={sc10} vp={vp10} {'✓' if cond['passa_10'] else '✗'} | −20%: score={sc20} vp={vp20} {'✓' if cond['passa_20'] else '✗'} | {e['title'][:50]}")
+
+    log.info(f"  CONDICIONAIS:      {len(condicionais)}")
+
+    if oportunidades or condicionais:
+        send_email(oportunidades, benchmarks, len(deduped), condicionais)
 
     # Marca todos como vistos
     seen.update(l["id"] for l in raw)
