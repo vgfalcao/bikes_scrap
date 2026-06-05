@@ -1462,6 +1462,109 @@ def render_condicional_html(l: dict, rank: int, cond: dict) -> str:
 
 
 
+
+def render_top3_cards(items: list, cat: str) -> str:
+    """
+    Renderiza linha de até 3 cards lado a lado para uma categoria.
+    card #1 tem borda de destaque verde.
+    Clique no card abre o anúncio diretamente.
+    """
+    if not items:
+        return ""
+
+    bg,  fg  = CAT_COLORS.get(cat, CAT_COLORS["speed"])
+    label    = "speed / road" if cat == "speed" else "MTB trail 29"
+    top3     = sorted(items, key=lambda x: x.get("score", 0), reverse=True)[:3]
+    n_label  = f"{len(items)} oportunidade{'s' if len(items)>1 else ''} &middot; por score"
+
+    def score_pill(val, max_val):
+        if val >= 65:
+            bg_p, fg_p = "#e1f5ee", "#085041"
+        elif val >= 55:
+            bg_p, fg_p = "#faeeda", "#633806"
+        else:
+            bg_p, fg_p = "#f1efe8", "#5f5e5a"
+        return f'<span style="font-size:10px;font-family:monospace;font-weight:500;padding:2px 7px;border-radius:3px;background:{bg_p};color:{fg_p}">{val}</span>'
+
+    def make_card(l, rank):
+        is_top   = rank == 1
+        border   = "2px solid #0b7a6e" if is_top else "0.5px solid #e0e0e0"
+        rank_bg  = "#e1f5ee" if is_top else "#f4f3ef"
+        rank_fg  = "#085041" if is_top else "#9b9a94"
+        sc       = l.get("score", 0)
+        vp       = l.get("vp",    0)
+        price_int = l.get("price_int", 0) or 0
+        median   = l.get("bench_median", 0) or 0
+        novo_loja= l.get("vp_bd", {}).get("novo_loja", 0) or 0
+        pct_used = round((median - price_int) / median * 100) if median and price_int else "?"
+        pct_loja = l.get("vp_bd", {}).get("pct_desconto_loja", "?")
+
+        src_bg, src_fg   = SOURCE_COLORS.get(l["source"], ("#f0eeea","#444"))
+        tier             = l.get("vp_bd", {}).get("tier", "C")
+        tier_bg, tier_fg = TIER_COLORS.get(tier, TIER_COLORS["C"])
+        cat_bg2, cat_fg2 = CAT_COLORS.get(l.get("category","speed"), CAT_COLORS["speed"])
+        mat      = l.get("material","")
+        mat_bg   = "#f1eefe" if "carbono" in mat else "#f1f0ea"
+        mat_fg   = "#534ab7" if "carbono" in mat else "#5f5e5a"
+        mat_lbl  = "carbono" if "carbono" in mat else "alumínio"
+
+        grupo_src  = l.get("grupo_source","")
+        grupo_raw  = l.get("grupo","—")
+        grupo_disp = f"{grupo_raw} ({'DB' if grupo_src!='titulo' else 'título'})" if grupo_src and grupo_src!='nenhum' else grupo_raw
+
+        sub_parts = [p for p in [
+            mat_lbl,
+            f"Tam {l.get('size','')}" if l.get("size") else "",
+            grupo_disp,
+            l.get("suspensao","") if l.get("category")=="mtb" else "",
+            str(l.get("year","")) if l.get("year") else "",
+            l.get("city",""),
+            "NF" if l.get("nf") else "",
+        ] if p and p not in ("—","")]
+        subtitle = " &middot; ".join(sub_parts[:5])
+
+        return f"""
+<a href="{l['url']}" style="display:flex;flex-direction:column;text-decoration:none;background:#ffffff;border:{border};border-radius:8px;overflow:hidden;flex:1;min-width:0">
+  <div style="padding:10px 12px 8px;flex:1">
+    <div style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:700;font-family:monospace;background:{rank_bg};color:{rank_fg};margin-bottom:6px">{rank}</div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+      <span style="font-size:9px;padding:1px 5px;border-radius:3px;font-family:monospace;font-weight:500;background:{src_bg};color:{src_fg}">{l['source']}</span>
+      <span style="font-size:9px;padding:1px 5px;border-radius:3px;font-family:monospace;font-weight:500;background:{tier_bg};color:{tier_fg}">Tier {tier}</span>
+      <span style="font-size:9px;padding:1px 5px;border-radius:3px;font-family:monospace;font-weight:500;background:{mat_bg};color:{mat_fg}">{mat_lbl}</span>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:#1c1b18;line-height:1.35;margin-bottom:3px">{l['title']}</div>
+    <div style="font-size:10px;color:#6a6960;line-height:1.4">{subtitle}</div>
+    <div style="display:flex;gap:5px;margin-top:7px">
+      {score_pill(sc, 100)}&nbsp;<span style="font-size:9px;color:#9b9a94;font-family:monospace;padding-top:3px">score</span>
+      &nbsp;{score_pill(vp, 100)}&nbsp;<span style="font-size:9px;color:#9b9a94;font-family:monospace;padding-top:3px">VP</span>
+    </div>
+  </div>
+  <div style="padding:8px 12px;border-top:1px solid #f0eeea;display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:14px;font-weight:700;color:#0b7a6e">{l['price']}</div>
+      <div style="font-size:9px;color:#9b9a94;font-family:monospace">&minus;{pct_used}% usados &middot; &minus;{pct_loja}% loja</div>
+    </div>
+    <span style="font-size:11px;color:#9b9a94">&#8594;</span>
+  </div>
+</a>"""
+
+    # Monta os 3 slots (placeholder se < 3)
+    slots = ""
+    for i, l in enumerate(top3, 1):
+        slots += make_card(l, i)
+    # Placeholder para slots vazios
+    for _ in range(3 - len(top3)):
+        slots += '<div style="flex:1;min-width:0;background:#f7f6f2;border-radius:8px;border:0.5px dashed #e0e0e0;display:flex;align-items:center;justify-content:center;min-height:130px"><span style="font-size:11px;color:#b0afa8">—</span></div>'
+
+    return f"""
+  <div style="display:flex;align-items:center;gap:8px;padding:12px 16px 8px;border-bottom:1px solid #f0eeea">
+    <span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:{bg};color:{fg}">{label}</span>
+    <span style="font-size:11px;color:#9b9a94;font-family:monospace">{n_label}</span>
+  </div>
+  <div style="display:flex;gap:8px;padding:10px 14px 14px">
+    {slots}
+  </div>"""
+
 def render_condicionais_html(items: list) -> str:
     if not items:
         return ""
@@ -1485,18 +1588,7 @@ def build_email_html(listings: list, run_time: str, total_analyzed: int, benchma
     def render_category(items: list, cat: str) -> str:
         if not items:
             return ""
-        bg, fg = CAT_COLORS.get(cat, CAT_COLORS["speed"])
-        label  = "speed / road" if cat == "speed" else "MTB trail 29"
-        blocks = ""
-        for i, l in enumerate(sorted(items, key=lambda x: x.get("score",0), reverse=True), 1):
-            analysis = analyze_with_claude(l)
-            blocks  += render_listing_html(l, i, analysis)
-        return f"""
-    <div style="display:flex;align-items:center;gap:10px;padding:12px 16px 8px;border-bottom:1px solid #f0eeea">
-      <span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:{bg};color:{fg}">{label}</span>
-      <span style="font-size:11px;color:#9b9a94;font-family:monospace">{len(items)} oportunidade{'s' if len(items)>1 else ''} · por score</span>
-    </div>
-    {blocks}"""
+        return render_top3_cards(items, cat)
 
     return f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -1698,9 +1790,17 @@ def main():
     if oportunidades or condicionais:
         send_email(oportunidades, benchmarks, len(deduped), condicionais)
 
-    # Marca todos como vistos
-    seen.update(l["id"] for l in raw)
+    # Marca como vistos:
+    # - Notificados (oportunidades + condicionais) → não renotifica
+    # - Filtrados hard (grupo ruim, categoria errada, preço absurdo) → não reavalia
+    # - Abaixo do threshold → NÃO marca → reavalia se o vendedor baixar o preço
+    ids_notificados  = {e["id"] for e in oportunidades}
+    ids_condicionais = {e["id"] for (e, _) in condicionais}
+    ids_filtrados    = {l["id"] for l in filtrados}
+    seen.update(ids_notificados | ids_condicionais | ids_filtrados)
     save_seen(seen)
+    log.info(f"Marcados como vistos: {len(ids_notificados)} notif + {len(ids_condicionais)} cond + {len(ids_filtrados)} filtrados")
+    log.info(f"Reavaliados na próxima run: {len(abaixo_thresh)} abaixo do threshold")
     log.info("Concluído.")
 
 
