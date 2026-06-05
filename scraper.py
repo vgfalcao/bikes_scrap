@@ -286,7 +286,13 @@ def get(url: str, retries: int = 3, headers: dict = None, **kwargs):
     return None
 
 def parse_price(s: str) -> int | None:
-    nums = re.sub(r"[^\d]", "", str(s))
+    """Trata formatos: R$ 6.499,00 | R$ 6.499 | 6499 | R$23.500"""
+    s = str(s).replace("R$","").replace("R$","").strip()
+    # Remove centavos BR: 6.499,00 → 6.499
+    s = re.sub(r",[0-9]{1,2}$", "", s.strip())
+    # Remove ponto de milhar: 6.499 → 6499
+    s = s.replace(".","").strip()
+    nums = re.sub(r"[^0-9]", "", s)
     return int(nums) if nums else None
 
 def price_ok(price: int | None) -> bool:
@@ -952,107 +958,121 @@ def scrape_semexe(urls: list) -> list:
     return results
 
 
-BIKEMAGAZINE_URLS = [
-    "https://classificados.bikemagazine.com.br/anuncios/categorias/ciclismo-speed/componente/bikes-completas?ordenar=mais-recentes",
-    "https://classificados.bikemagazine.com.br/anuncios/categorias/ciclismo-mountain-bike/componente/bikes-completas?ordenar=mais-recentes",
+# Queries de busca para o Firecrawl Search — Bikemagazine Classificados
+# Estratégia: busca indexada em vez de scraping direto (contorna bloqueio)
+BIKEMAGAZINE_QUERIES = [
+    "site:classificados.bikemagazine.com.br bikes completas speed carbono 105",
+    "site:classificados.bikemagazine.com.br bikes completas speed ultegra",
+    "site:classificados.bikemagazine.com.br bikes completas speed cannondale trek specialized",
+    "site:classificados.bikemagazine.com.br bikes completas mountain bike XT 29",
+    "site:classificados.bikemagazine.com.br bikes completas mountain bike carbono 29",
 ]
 
 
-def scrape_bikemagazine(urls: list) -> list:
+def firecrawl_search(query: str, limit: int = 5) -> list[dict]:
     """
-    Scraper do Bikemagazine Classificados.
-    Extrai links da listagem e lê cada anúncio via meta tags OG.
-    Requer ScraperAPI para funcionar no GitHub Actions.
+    Usa Firecrawl /search para buscar anúncios no Bikemagazine via índice web.
+    Retorna lista de resultados com url, title, description, markdown.
+    Consome 1 crédito por resultado (limit=5 → 5 créditos por query).
     """
+    if not FIRECRAWL_API_KEY:
+        return []
+    try:
+        resp = requests.post(
+            f"{FIRECRAWL_BASE}/search",
+            headers={
+                "Authorization": f"Bearer {FIRECRAWL_API_KEY}",
+                "Content-Type":  "application/json",
+            },
+            json={"query": query, "limit": limit},
+            timeout=30,
+        )
+        if resp.status_code != 200:
+            log.warning(f"Firecrawl Search HTTP {resp.status_code} para '{query[:50]}'")
+            return []
+        data = resp.json()
+        if not data.get("success"):
+            log.warning(f"Firecrawl Search erro: {data.get('error','?')}")
+            return []
+        return data.get("data", [])
+    except Exception as e:
+        log.warning(f"Firecrawl Search exceção: {e}")
+        return []
+
+
+def scrape_bikemagazine(queries: list = None) -> list:
+    """
+    Busca anúncios do Bikemagazine via Firecrawl Search (índice web).
+    Não acessa o site diretamente — contorna bloqueio de datacenter.
+    Cada resultado já vem com título, descrição e markdown do conteúdo.
+    """
+    if queries is None:
+        queries = BIKEMAGAZINE_QUERIES
+
+    if not FIRECRAWL_API_KEY:
+        log.warning("Bikemagazine: FIRECRAWL_API_KEY não configurada — pulando")
+        return []
+
     results = []
-    all_links: set = set()
+    seen_urls: set = set()
 
-    for listing_url in urls:
-        page = 1
-        while True:
-            url = f"{listing_url}&pagina={page}" if page > 1 else listing_url
-            log.info(f"Bikemagazine: {url.split('?')[0].split('/')[-2]} p{page}")
-            r = get_proxied(url)
-            if not r:
-                break
-            soup = BeautifulSoup(r.text, "html.parser")
-            # Links de anúncio: /anuncios/NNNNN-slug
-            found = 0
-            for a in soup.find_all("a", href=True):
-                href = a["href"]
-                if re.match(r"https?://classificados\.bikemagazine\.com\.br/anuncios/[0-9]", href):
-                    if href not in all_links:
-                        all_links.add(href)
-                        found += 1
-                elif re.match(r"^/anuncios/[0-9]", href):
-                    full = "https://classificados.bikemagazine.com.br" + href
-                    if full not in all_links:
-                        all_links.add(full)
-                        found += 1
-            log.info(f"  {found} links novos (total {len(all_links)})")
-            if found == 0:
-                break
-            # Verifica paginação
-            next_pg = soup.select_one("a[rel='next'], .pagination .next, [class*='proxima']")
-            if not next_pg:
-                break
-            page += 1
-            if page > 5:
-                break
-            time.sleep(CONFIG["delay"])
+    for query in queries:
+        log.info(f"Bikemagazine search: '{query[:60]}'")
+        hits = firecrawl_search(query, limit=5)
+        log.info(f"  {len(hits)} resultados")
 
-    log.info(f"Bikemagazine: {len(all_links)} anúncios únicos para processar")
+        for hit in hits:
+            url = hit.get("url", "")
 
-    for url in all_links:
-        r = get_proxied(url)
-        if not r:
-            continue
-        soup = BeautifulSoup(r.text, "html.parser")
+            # Filtra apenas URLs de anúncios individuais do Bikemagazine
+            if not re.match(r"https?://classificados\.bikemagazine\.com\.br/anuncios/[0-9]", url):
+                continue
+            if url in seen_urls:
+                continue
+            seen_urls.add(url)
 
-        def meta(prop):
-            tag = soup.find("meta", property=prop) or soup.find("meta", attrs={"name": prop})
-            return tag["content"].strip() if tag and tag.get("content") else ""
+            title    = (hit.get("title") or "").strip()
+            desc_raw = (hit.get("description") or "").strip()
+            markdown = (hit.get("markdown") or "")
 
-        title     = meta("og:title").strip()
-        desc_raw  = meta("og:description").strip()
-        img       = meta("og:image")
+            # Limpa título — Bikemagazine adiciona "Classificados Bikemagazine - " no início
+            title = re.sub(r"^Classificados Bikemagazine\s*[-–]\s*", "", title).strip()
 
-        if not title or title.lower() == "classificados bikemagazine":
-            time.sleep(CONFIG["delay"])
-            continue
+            if not title:
+                continue
 
-        # Preço: busca no HTML — aparece como "R$ 6.499,00"
-        price_el = soup.select_one("[class*='preco'], [class*='price'], h2 ~ p strong, .valor")
-        price_s  = ""
-        if price_el:
-            price_s = price_el.get_text(strip=True)
-        else:
-            # Fallback: busca no texto completo da página
-            m = re.search(r"R[$]\s*([0-9.,]+)", r.text)
+            # Extrai preço do markdown (mais rico que a description)
+            price_s   = ""
+            price_int = None
+            m = re.search(r"R\$\s*([\d.,]+)", markdown or desc_raw)
             if m:
-                price_s = "R$ " + m.group(1)
+                price_s   = "R$ " + m.group(1)
+                price_int = parse_price(price_s)
 
-        price_int = parse_price(price_s)
-        ad_id     = re.search(r"/anuncios/([0-9]+)", url)
-        ad_id     = ad_id.group(1) if ad_id else hashlib.md5(url.encode()).hexdigest()[:10]
+            # ID do anúncio a partir da URL
+            ad_id_m = re.search(r"/anuncios/([0-9]+)", url)
+            ad_id   = ad_id_m.group(1) if ad_id_m else hashlib.md5(url.encode()).hexdigest()[:10]
 
-        # Cidade do anunciante
-        city_el = soup.select_one("[class*='cidade'], [class*='city'], td:contains('Cidade') + td")
-        city    = city_el.get_text(strip=True) if city_el else ""
+            # Cidade: busca no markdown
+            city = ""
+            city_m = re.search(r"Cidade[^\n]*\n([^\n]+)", markdown)
+            if city_m:
+                city = city_m.group(1).strip()
 
-        results.append({
-            "id":        make_id("bikemagazine", ad_id),
-            "source":    "Bikemagazine",
-            "title":     title,
-            "desc":      desc_raw[:400],
-            "price":     price_s or "A combinar",
-            "price_int": price_int,
-            "url":       url,
-            "city":      city,
-        })
+            results.append({
+                "id":        make_id("bikemagazine", ad_id),
+                "source":    "Bikemagazine",
+                "title":     title,
+                "desc":      (markdown[:600] if markdown else desc_raw[:400]),
+                "price":     price_s or "A combinar",
+                "price_int": price_int,
+                "url":       url,
+                "city":      city,
+            })
+
         time.sleep(CONFIG["delay"])
 
-    log.info(f"Bikemagazine: {len(results)} anúncios coletados")
+    log.info(f"Bikemagazine: {len(results)} anúncios únicos coletados")
     return results
 
 
@@ -1584,7 +1604,7 @@ def main():
     # Coleta bruta
     raw = []
     raw.extend(scrape_bazarbikes(BAZARBIKES_ENDPOINTS))
-    raw.extend(scrape_bikemagazine(BIKEMAGAZINE_URLS))
+    raw.extend(scrape_bikemagazine())
     raw.extend(scrape_semexe(SEMEXE_URLS))
     raw.extend(scrape_olx(BUSCA_OLX))
     log.info(f"Total bruto coletado: {len(raw)}")
