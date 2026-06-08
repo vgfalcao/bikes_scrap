@@ -1,8 +1,8 @@
 {
   "_meta": {
     "version": "1.0",
-    "updated_at": "2025-06-03",
-    "description": "Database de modelos de bikes speed e MTB tier A e B, 2010+. Usado pelo scraper para enriquecer anúncios sem grupo declarado no título.",
+    "updated_at": "2026-06-08",
+    "description": "Database de modelos de bikes speed e MTB tier A e B, 2010+. Usado pelo scraper para enriquecer anúncios sem grupo declarado no título. Expandido em jun/2026 com 20 novos modelos speed tier A.",
     "logica_grupo": "título vence se grupo declarado for MELHOR que OEM; database vence se for PIOR. Sem ano no título: usa último ano mapeado. Sem match E sem grupo: passa com alerta.",
     "grupo_ranking": {
       "speed": [
@@ -335,96 +335,6 @@
         }
       },
       "notas": "Endurance. Geometria mais ereta que SuperSix."
-    },
-    "trek_emonda": {
-      "marca": "trek",
-      "modelo": "Émonda",
-      "tier": "A",
-      "categoria": "speed",
-      "aliases": [
-        "emonda",
-        "émonda",
-        "emonda slr",
-        "emonda sl",
-        "emonda alr",
-        "emonda s",
-        "trek emonda",
-        "emonda 5",
-        "emonda 6",
-        "emonda 7",
-        "trek emonda sl",
-        "trek emonda slr",
-        "trek emonda alr"
-      ],
-      "anos": {
-        "2014": {
-          "material": "carbono",
-          "grupo_oem": "ultegra",
-          "peso_kg": 7.5,
-          "freio": "rim"
-        },
-        "2015": {
-          "material": "carbono",
-          "grupo_oem": "ultegra",
-          "peso_kg": 7.5,
-          "freio": "rim"
-        },
-        "2016": {
-          "material": "carbono",
-          "grupo_oem": "ultegra",
-          "peso_kg": 7.5,
-          "freio": "rim"
-        },
-        "2017": {
-          "material": "carbono",
-          "grupo_oem": "ultegra",
-          "peso_kg": 7.5,
-          "freio": "rim"
-        },
-        "2018": {
-          "material": "carbono",
-          "grupo_oem": "ultegra r8000",
-          "peso_kg": 7.6,
-          "freio": "rim"
-        },
-        "2019": {
-          "material": "carbono",
-          "grupo_oem": "ultegra r8000",
-          "peso_kg": 7.6,
-          "freio": "disc"
-        },
-        "2020": {
-          "material": "carbono",
-          "grupo_oem": "105 r7000",
-          "peso_kg": 8.1,
-          "freio": "disc"
-        },
-        "2021": {
-          "material": "carbono",
-          "grupo_oem": "105 r7000",
-          "peso_kg": 8.1,
-          "freio": "disc"
-        },
-        "2022": {
-          "material": "carbono",
-          "grupo_oem": "105 r7000",
-          "peso_kg": 8.1,
-          "freio": "disc"
-        },
-        "2023": {
-          "material": "carbono",
-          "grupo_oem": "105 r7100",
-          "peso_kg": 8.0,
-          "freio": "disc"
-        },
-        "2024": {
-          "material": "carbono",
-          "grupo_oem": "105 r7100",
-          "peso_kg": 8.0,
-          "freio": "disc"
-        }
-      },
-      "notas": "ALR = alumínio (OCLV 500 = carbono entry, OCLV 700/800 = carbono premium). SLR = topo."
     },
     "trek_domane": {
       "marca": "trek",
@@ -1186,72 +1096,6 @@
       },
       "notas": "R5 = topo. S3/S5 = aero. R3 = all-round mais comum no usado BR."
     },
-    "bmc_teammachine": {
-      "marca": "bmc",
-      "modelo": "Teammachine SLR",
-      "tier": "A",
-      "categoria": "speed",
-      "aliases": [
-        "teammachine slr",
-        "teammachine slr01",
-        "teammachine slr02",
-        "teammachine slr03",
-        "bmc slr",
-        "bmc teammachine",
-        "bmc road"
-      ],
-      "anos": {
-        "2013": {
-          "material": "carbono",
-          "grupo_oem": "ultegra",
-          "peso_kg": 7.4,
-          "freio": "rim"
-        },
-        "2015": {
-          "material": "carbono",
-          "grupo_oem": "ultegra",
-          "peso_kg": 7.3,
-          "freio": "rim"
-        },
-        "2017": {
-          "material": "carbono",
-          "grupo_oem": "ultegra r8000",
-          "peso_kg": 7.2,
-          "freio": "rim"
-        },
-        "2019": {
-          "material": "carbono",
-          "grupo_oem": "105 r7000",
-          "peso_kg": 7.9,
-          "freio": "disc"
-        },
-        "2021": {
-          "material": "carbono",
-          "grupo_oem": "105 r7000",
-          "peso_kg": 7.9,
-          "freio": "disc"
-        },
-        "2022": {
-          "material": "carbono",
-          "grupo_oem": "105 r7100",
-          "peso_kg": 7.8,
-          "freio": "disc"
-        },
-        "2023": {
-          "material": "carbono",
-          "grupo_oem": "105 r7100",
-          "peso_kg": 7.8,
-          "freio": "disc"
-        },
-        "2024": {
-          "material": "carbono",
-          "grupo_oem": "105 r7100",
-          "peso_kg": 7.8,
-          "freio": "disc"
-        }
-      },
-      "notas": "SLR01 = topo. SLR02/03 = intermediários. Anos pares dominam no Brasil."
-    },
     "merida_scultura": {
       "marca": "merida",
       "modelo": "Scultura",
@@ -1400,6 +1244,1843 @@
         }
       },
       "notas": "C:62 Race = topo de linha Cube road."
+    },
+    "trek_madone": {
+      "marca": "trek",
+      "modelo": "Madone",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "madone slr",
+        "madone sl",
+        "madone slr 9",
+        "madone slr 7",
+        "madone slr 6",
+        "madone sl 6",
+        "madone sl 7",
+        "madone 9 series",
+        "madone 5 series",
+        "trek madone",
+        "madone gen 6",
+        "madone gen 7",
+        "madone gen 8",
+        "madone slr disc",
+        "madone sl disc"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.7,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.7,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "ultegra di2",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        }
+      },
+      "notas": "Aero bike Trek. SLR = OCLV 800 (topo). SL = OCLV 500. Gen 8 (2024+) substituiu Émonda carbono também. SLR vem com Di2 obrigatório em 2023+."
+    },
+    "trek_checkpoint": {
+      "marca": "trek",
+      "modelo": "Checkpoint",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "checkpoint sl",
+        "checkpoint slr",
+        "checkpoint alr",
+        "trek checkpoint",
+        "checkpoint 5",
+        "checkpoint 6",
+        "checkpoint 7"
+      ],
+      "anos": {
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.2,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.1,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.0,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.0,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.9,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.9,
+          "freio": "disc"
+        }
+      },
+      "notas": "Gravel/endurance Trek. SL = carbono. ALR = alumínio. Comum no mercado usado SP."
+    },
+    "specialized_roubaix": {
+      "marca": "specialized",
+      "modelo": "Roubaix",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "roubaix comp",
+        "roubaix expert",
+        "roubaix pro",
+        "s-works roubaix",
+        "specialized roubaix",
+        "roubaix sl7",
+        "roubaix sl8",
+        "roubaix sport",
+        "roubaix carbono"
+      ],
+      "anos": {
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 8.3,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 8.3,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 8.4,
+          "freio": "disc"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.4,
+          "freio": "disc"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.6,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.6,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        }
+      },
+      "notas": "Endurance com Future Shock (suspensão frontal). Comp = 105/Ultegra mec. Expert = Ultegra/Di2. Muito comum no mercado SP."
+    },
+    "specialized_aethos": {
+      "marca": "specialized",
+      "modelo": "Aethos",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "aethos pro",
+        "aethos expert",
+        "aethos comp",
+        "s-works aethos",
+        "specialized aethos"
+      ],
+      "anos": {
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.4,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.4,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.3,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.3,
+          "freio": "disc"
+        }
+      },
+      "notas": "Climbing bike Specialized. Quadro ultraleve. Comp = nível entry. Pro/Expert = builds superiores."
+    },
+    "giant_defy": {
+      "marca": "giant",
+      "modelo": "Defy Advanced",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "defy advanced",
+        "defy advanced pro",
+        "defy advanced sl",
+        "giant defy",
+        "defy pro",
+        "defy 1",
+        "defy 2",
+        "defy advanced 1",
+        "defy advanced 2"
+      ],
+      "anos": {
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.8,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.7,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.6,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.4,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 di2",
+          "peso_kg": 8.3,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 di2",
+          "peso_kg": 8.3,
+          "freio": "disc"
+        }
+      },
+      "notas": "Endurance Giant. Advanced SL = carbono hi-mod (mais raro). D-Fuse seatpost para conforto. Muito comum no mercado SP."
+    },
+    "giant_contend": {
+      "marca": "giant",
+      "modelo": "Contend",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "contend sl",
+        "contend ar",
+        "giant contend",
+        "contend 1",
+        "contend 2",
+        "contend sl 1",
+        "contend sl 2"
+      ],
+      "anos": {
+        "2016": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 9.2,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 9.1,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.0,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.9,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.9,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.8,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.7,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.7,
+          "freio": "disc"
+        }
+      },
+      "notas": "Entry-level alu Giant tier A. Garfo carbono. SL = alu de maior qualidade. AR = versão all-road."
+    },
+    "canyon_endurace": {
+      "marca": "canyon",
+      "modelo": "Endurace",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "endurace cf",
+        "endurace cf sl",
+        "endurace cf slx",
+        "endurace cfr",
+        "canyon endurace",
+        "endurace 7",
+        "endurace 8",
+        "endurace disc",
+        "endurace al",
+        "endurace 6"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.3,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        }
+      },
+      "notas": "Endurance Canyon. CF = carbono standard. CF SL = carbono leve. CF SLX = topo. Importação direta BR = custo alto. Comum no mercado SP usado."
+    },
+    "canyon_ultimate": {
+      "marca": "canyon",
+      "modelo": "Ultimate",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "ultimate cf",
+        "ultimate cf sl",
+        "ultimate cf slx",
+        "ultimate cfr",
+        "canyon ultimate",
+        "ultimate 7",
+        "ultimate 8",
+        "ultimate 9"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.1,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        }
+      },
+      "notas": "Race bike Canyon. CF SL 7 = 105 mec. CF SL 8 = Ultegra Di2. CFR = topo Dura-Ace Di2. Muito valorizado no mercado SP por custo-benefício."
+    },
+    "canyon_aeroad": {
+      "marca": "canyon",
+      "modelo": "Aeroad",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "aeroad cf",
+        "aeroad cf sl",
+        "aeroad cf slx",
+        "aeroad cfr",
+        "canyon aeroad",
+        "aeroad 7",
+        "aeroad 8"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        }
+      },
+      "notas": "Aero bike Canyon. Gen 2020 (CF SLX) muito valorizada. Importação direta. Menos comum que Endurace/Ultimate no SP."
+    },
+    "orbea_orca": {
+      "marca": "orbea",
+      "modelo": "Orca",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "orca omx",
+        "orca omr",
+        "orca m10",
+        "orca m20",
+        "orca m30",
+        "orca aero",
+        "orbea orca",
+        "orca ltd"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.7,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.7,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.5,
+          "freio": "disc"
+        }
+      },
+      "notas": "Climbing/all-round. OMX = hi-mod (topo, ~750g quadro). OMR = standard. M30 = 105. M20 = Ultegra. Customização via MyO."
+    },
+    "orbea_avant": {
+      "marca": "orbea",
+      "modelo": "Avant",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "avant m10",
+        "avant m20",
+        "avant m30",
+        "avant h10",
+        "avant h30",
+        "orbea avant",
+        "avant carbono",
+        "avant aluminio"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.3,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.2,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.1,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 9.0,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 9.0,
+          "freio": "disc"
+        }
+      },
+      "notas": "ATENÇÃO: 2021+ passou de carbono para alumínio (corte de custo). Antes de 2021 = carbono. Endurance Orbea."
+    },
+    "scott_speedster": {
+      "marca": "scott",
+      "modelo": "Speedster",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "speedster 10",
+        "speedster 20",
+        "speedster 30",
+        "speedster disc",
+        "scott speedster"
+      ],
+      "anos": {
+        "2016": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 9.1,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 9.1,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.0,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.0,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.9,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.8,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.8,
+          "freio": "disc"
+        }
+      },
+      "notas": "Entry-level alu Scott tier A. Garfo carbono. Menos comum que Addict no mercado SP."
+    },
+    "scott_foil": {
+      "marca": "scott",
+      "modelo": "Foil",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "foil rc",
+        "foil 10",
+        "foil 20",
+        "foil 30",
+        "foil pro",
+        "scott foil",
+        "foil premium",
+        "foil ultimate"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.9,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.8,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        }
+      },
+      "notas": "Aero bike Scott. RC = topo. Menos frequente que Addict no mercado BR."
+    },
+    "colnago_c64": {
+      "marca": "colnago",
+      "modelo": "C64",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "c64",
+        "c68",
+        "c60",
+        "colnago c64",
+        "colnago c68",
+        "colnago c60",
+        "v3",
+        "v3rs",
+        "colnago v3",
+        "colnago v3rs",
+        "colnago road"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "dura-ace",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "dura-ace",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "dura-ace",
+          "peso_kg": 7.1,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "dura-ace",
+          "peso_kg": 7.1,
+          "freio": "rim"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "ultegra di2",
+          "peso_kg": 7.6,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "ultegra di2",
+          "peso_kg": 7.5,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "dura-ace di2",
+          "peso_kg": 7.2,
+          "freio": "disc"
+        }
+      },
+      "notas": "C64 = 2018-2020 (lugged carbon). C68 = 2021+. V3 = tubeset carbono fundido. Menos comum no mercado SP."
+    },
+    "cervelo_caledonia": {
+      "marca": "cervelo",
+      "modelo": "Caledonia",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "caledonia 5",
+        "caledonia pro",
+        "cervelo caledonia"
+      ],
+      "anos": {
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        }
+      },
+      "notas": "Endurance/all-road Cervelo. Lançado em 2021."
+    },
+    "look_785": {
+      "marca": "look",
+      "modelo": "785 Huez",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "785 huez",
+        "huez rs",
+        "765 optimum",
+        "look 785",
+        "look 795",
+        "795 blade",
+        "look huez",
+        "look blade",
+        "look road"
+      ],
+      "anos": {
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.5,
+          "freio": "disc"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.7,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.7,
+          "freio": "disc"
+        }
+      },
+      "notas": "Climbing bike francesa. 795 Blade = aero. 785 Huez = climbing. Menos comum no SP mas aparece."
+    },
+    "factor_ostro": {
+      "marca": "factor",
+      "modelo": "Ostro",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "ostro vam",
+        "ostro cf",
+        "factor ostro",
+        "factor road",
+        "factor one"
+      ],
+      "anos": {
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.7,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.7,
+          "freio": "disc"
+        }
+      },
+      "notas": "Nicho alto. Raridade no mercado SP mas aparece eventualmente."
+    },
+    "de_rosa_idol": {
+      "marca": "de rosa",
+      "modelo": "Idol",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "de rosa idol",
+        "de rosa sk",
+        "de rosa sk pininfarina",
+        "de rosa carbono",
+        "de rosa road",
+        "derosa idol",
+        "derosa"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.3,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        }
+      },
+      "notas": "Italiana de nicho. Idol = all-round. SK = superbike. Aparece raramente no mercado SP."
+    },
+    "time_alpe": {
+      "marca": "time",
+      "modelo": "Alpe d'Huez",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "alpe d'huez",
+        "alpe dhuez",
+        "time road",
+        "time carbono",
+        "time rxrs",
+        "time rx",
+        "time fluidity"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.2,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        }
+      },
+      "notas": "Francesa com tecnologia AKTIV (absorção de vibração no chasì). Nicho. Raridade no SP."
+    },
+    "trek_emonda_alr": {
+      "marca": "trek",
+      "modelo": "Émonda ALR",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "emonda alr",
+        "émonda alr",
+        "trek emonda alr",
+        "emonda alr 4",
+        "emonda alr 5",
+        "emonda alr 6",
+        "emonda alr 7",
+        "emonda aluminio",
+        "emonda alu"
+      ],
+      "anos": {
+        "2014": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.8,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.7,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "aluminio",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "aluminio",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2020": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2021": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2022": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        }
+      },
+      "notas": "Quadro alumínio Alpha Platinum. Garfo FULL CARBON em todos os anos. Rim brake em toda a linha. ALR 4=105, ALR 5=105, ALR 6=Ultegra, ALR 7=Ultegra. Descontinuada em 2022."
+    },
+    "trek_emonda_sl": {
+      "marca": "trek",
+      "modelo": "Émonda SL",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "emonda sl",
+        "émonda sl",
+        "trek emonda sl",
+        "emonda sl 5",
+        "emonda sl 6",
+        "emonda sl 7",
+        "emonda carbono",
+        "emonda oclv 500"
+      ],
+      "anos": {
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.1,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        }
+      },
+      "notas": "OCLV 500 carbon (entry carbono Trek). SL 5 = 105. SL 6 = Ultegra. SL 7 = Ultegra. Rim até 2018, disc a partir de 2019. Descontinuada em 2023 (substituída pela Madone Gen 8)."
+    },
+    "trek_emonda_slr": {
+      "marca": "trek",
+      "modelo": "Émonda SLR",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "emonda slr",
+        "émonda slr",
+        "trek emonda slr",
+        "emonda slr 6",
+        "emonda slr 7",
+        "emonda slr 8",
+        "emonda slr 9",
+        "emonda oclv 700",
+        "emonda oclv 800"
+      ],
+      "anos": {
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.5,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.5,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.6,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        }
+      },
+      "notas": "OCLV 700 (2014-2018) e OCLV 800 (2019+). SLR 6=Ultegra, SLR 7=Ultegra Di2, SLR 8/9=Dura-Ace Di2. Topo absoluto da linha. Descontinuada em 2023 (absorvida pela Madone Gen 8)."
+    },
+    "trek_emonda_s": {
+      "marca": "trek",
+      "modelo": "Émonda S",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "emonda s",
+        "émonda s",
+        "trek emonda s",
+        "emonda s 4",
+        "emonda s 5",
+        "emonda s 6"
+      ],
+      "anos": {
+        "2014": {
+          "material": "aluminio",
+          "grupo_oem": "tiagra",
+          "peso_kg": 9.2,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "aluminio",
+          "grupo_oem": "tiagra",
+          "peso_kg": 9.2,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 9.0,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 9.0,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.9,
+          "freio": "rim"
+        }
+      },
+      "notas": "Linha base Émonda alumínio. Garfo carbono. S 4=Tiagra, S 5=105, S 6=105. Descontinuada em 2018. Score baixo — abaixo do threshold normalmente."
+    },
+    "bmc_teammachine_slr01": {
+      "marca": "bmc",
+      "modelo": "Teammachine SLR01",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "teammachine slr01",
+        "teammachine slr 01",
+        "bmc slr01",
+        "slr01 one",
+        "slr01 two",
+        "slr01 three",
+        "slr01 four",
+        "slr01 five",
+        "bmc teammachine slr01",
+        "teammachine slr01 disc",
+        "bmc slr 01 one",
+        "bmc slr 01 two",
+        "bmc slr 01 three",
+        "teammachine slr",
+        "bmc slr",
+        "bmc teammachine",
+        "bmc road",
+        "teammachine slr02",
+        "teammachine slr03"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.2,
+          "freio": "disc"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.2,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.2,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "ultegra di2",
+          "peso_kg": 7.1,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "ultegra di2",
+          "peso_kg": 7.1,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "ultegra di2",
+          "peso_kg": 7.1,
+          "freio": "disc"
+        },
+        "2025": {
+          "material": "carbono",
+          "grupo_oem": "dura-ace di2",
+          "peso_kg": 6.8,
+          "freio": "disc"
+        },
+        "2013": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2014": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.4,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "carbono",
+          "grupo_oem": "ultegra",
+          "peso_kg": 7.3,
+          "freio": "rim"
+        }
+      },
+      "notas": "Frame hi-mod premium BMC. One=SRAM Red/DA Di2, Two=DA Di2/Ultegra Di2, Three=Ultegra Di2/Force, Four=Ultegra Di2, Five=Ultegra Di2 12v. Grupo OEM mapeado pelo build médio (Three). SLR01 Three 2019 = Ultegra Di2 R8070."
+    },
+    "bmc_teammachine_slr": {
+      "marca": "bmc",
+      "modelo": "Teammachine SLR",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "teammachine slr two",
+        "teammachine slr three",
+        "teammachine slr four",
+        "bmc teammachine slr",
+        "bmc slr two",
+        "bmc slr three",
+        "bmc slr four",
+        "slr two",
+        "slr three",
+        "slr four",
+        "teammachine slr 2",
+        "teammachine slr 3",
+        "teammachine slr 4"
+      ],
+      "anos": {
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2025": {
+          "material": "carbono",
+          "grupo_oem": "ultegra di2",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        }
+      },
+      "notas": "Linha mais acessível do Teammachine. Mesmo frame carbon do SLR01 gen 4. Two=Ultegra Di2, Three=105 Di2, Four=105 mec. Gen 4.5 (2024+) ganhou ICS integrado. Muito mais comum no mercado SP que o SLR01."
+    },
+    "bmc_roadmachine_01": {
+      "marca": "bmc",
+      "modelo": "Roadmachine 01",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "roadmachine 01",
+        "roadmachine 01 one",
+        "roadmachine 01 two",
+        "roadmachine 01 three",
+        "roadmachine 01 four",
+        "bmc roadmachine 01",
+        "bmc rm 01"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.3,
+          "freio": "disc"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.3,
+          "freio": "disc"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.3,
+          "freio": "disc"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.0,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "ultegra di2",
+          "peso_kg": 7.9,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "ultegra di2",
+          "peso_kg": 7.8,
+          "freio": "disc"
+        }
+      },
+      "notas": "Endurance premium BMC. ICS cockpit integrado. 01 One=SRAM Red/Force, 01 Two=Ultegra Di2, 01 Three=Force AXS/Ultegra, 01 Four=Ultegra Di2. Gen 3 (2023+) tem clearance 40mm. Grupo mapeado pelo build médio (Three/Four)."
+    },
+    "bmc_roadmachine_02": {
+      "marca": "bmc",
+      "modelo": "Roadmachine 02",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "roadmachine 02",
+        "roadmachine 02 one",
+        "roadmachine 02 two",
+        "roadmachine 02 three",
+        "bmc roadmachine 02",
+        "bmc rm 02",
+        "roadmachine two",
+        "roadmachine three"
+      ],
+      "anos": {
+        "2016": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.6,
+          "freio": "disc"
+        },
+        "2017": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.6,
+          "freio": "disc"
+        },
+        "2018": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "disc"
+        },
+        "2019": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.3,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.3,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "carbono",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.2,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        },
+        "2024": {
+          "material": "carbono",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 8.1,
+          "freio": "disc"
+        }
+      },
+      "notas": "Mesmo frame do Roadmachine 01 mas cockpit convencional (sem ICS). 02 One=Ultegra mec, 02 Two=105, 02 Three=105. Mais comum no mercado SP que o 01. Fender mounts."
+    },
+    "bmc_roadmachine_x": {
+      "marca": "bmc",
+      "modelo": "Roadmachine X",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "roadmachine x",
+        "roadmachine x one",
+        "roadmachine x two",
+        "bmc roadmachine x",
+        "bmc rmx",
+        "roadmachine x aluminio"
+      ],
+      "anos": {
+        "2019": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.5,
+          "freio": "disc"
+        },
+        "2020": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.5,
+          "freio": "disc"
+        },
+        "2021": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.4,
+          "freio": "disc"
+        },
+        "2022": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 9.4,
+          "freio": "disc"
+        },
+        "2023": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7100",
+          "peso_kg": 9.3,
+          "freio": "disc"
+        }
+      },
+      "notas": "All-road/gravel-adjacent BMC. Alumínio, clearance 34mm, rack/fender mounts. Muito abaixo do threshold normalmente — peso alto, alu, mas tier A da marca."
     }
   },
   "mtb": {
