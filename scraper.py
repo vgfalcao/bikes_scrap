@@ -29,7 +29,7 @@ CONFIG = {
     "state_file":  "seen_ids.json",
     "bench_file":  "benchmarks.json",
     "delay":       2.5,
-    "score_min":   55,
+    "score_min":   50,
     "vp_min":      65,
 }
 
@@ -43,6 +43,8 @@ BENCHMARKS_DEFAULT = {
     "confidence": "high",
     "speed": {
         "alu_105":           {"p25": 3800,  "median": 5200,  "p75": 6400,  "novo_loja": 11900, "novo_ml": 9800},
+        "alu_ultegra":       {"p25": 5500,  "median": 7500,  "p75": 9500,  "novo_loja": 16000, "novo_ml": 13500},
+        "alu_rival":         {"p25": 4500,  "median": 6000,  "p75": 7500,  "novo_loja": 13000, "novo_ml": 11000},
         "carbono_105":       {"p25": 6800,  "median": 9000,  "p75": 11500, "novo_loja": 18500, "novo_ml": 15500},
         "carbono_ultegra":   {"p25": 9500,  "median": 13000, "p75": 16000, "novo_loja": 26000, "novo_ml": 22000},
         "carbono_di2":       {"p25": 14000, "median": 19000, "p75": 25000, "novo_loja": 42000, "novo_ml": 36000},
@@ -337,9 +339,15 @@ def detect_category(title: str, desc: str = "") -> str | None:
     """Retorna 'speed' ou 'mtb' ou None."""
     t = norm(title + " " + desc)
     speed_kw = ["speed","estrada","road","gravel","drop","105","ultegra","dura-ace",
-                "caad","supersix","tarmac","emonda","tcr","synapse","roubaix","addict"]
-    mtb_kw   = ["mtb","mountain","trail","enduro","29er","aro 29","29\"","trilha",
-                "stumpjumper","fuel ex","spark","sense exper","hoje","hightower"]
+                "caad","supersix","tarmac","emonda","tcr","synapse","roubaix","addict",
+                "rimbrake","rim brake","pedivela compacto"]
+    mtb_kw   = ["mtb","mountain","trail","enduro","29er","aro 29","trilha",
+                "stumpjumper","fuel ex","spark","sense exper","hightower",
+                "lefty","scalpel","fsi","scale","spark rc","genius","neuron",
+                "impact","big wheel","agile","oggi 29","oggi mtb",
+                "xtr","slx","deore m","xt m8","xt m9","gx eagle","nx eagle",
+                "x01","xx1","rockshox pike","rockshox lyrik","fox 34","fox 36",
+                "suspensao ar","canote retratil","dropper"]
     if text_contains_any(t, KEYWORDS_DESCARTAR):
         return None
     s = sum(1 for k in speed_kw if k in t)
