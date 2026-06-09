@@ -264,6 +264,8 @@ def enrich_from_db(title: str, desc: str, attrs: dict, db: dict) -> dict:
     attrs["grupo_source"]         = grupo_source
     attrs["grupo_nao_confirmado"] = False
     attrs["tier"]                 = model.get("tier", "C")  # tier da marca via database
+    if not attrs.get("brand"):  # propaga marca do DB se não detectada no título
+        attrs["brand"] = model.get("marca")
 
     return attrs
 

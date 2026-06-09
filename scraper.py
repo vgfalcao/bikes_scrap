@@ -503,6 +503,7 @@ def score_speed(attrs: dict, benchmarks: dict) -> tuple[int, dict]:
         if   pct_off >= 0.30: bd["preco"] = 30
         elif pct_off >= 0.20: bd["preco"] = 22
         elif pct_off >= 0.10: bd["preco"] = 14
+        elif pct_off >= 0.05: bd["preco"] = 10
         elif pct_off >= 0.00: bd["preco"] = 7
         else:                 bd["preco"] = 0
     else:
@@ -579,6 +580,7 @@ def score_mtb(attrs: dict, benchmarks: dict) -> tuple[int, dict]:
         if   pct_off >= 0.30: bd["preco"] = 30
         elif pct_off >= 0.20: bd["preco"] = 22
         elif pct_off >= 0.10: bd["preco"] = 14
+        elif pct_off >= 0.05: bd["preco"] = 10
         elif pct_off >= 0.00: bd["preco"] = 7
         else:                 bd["preco"] = 0
     else:

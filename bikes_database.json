@@ -2454,80 +2454,6 @@
       },
       "notas": "Francesa com tecnologia AKTIV (absorção de vibração no chasì). Nicho. Raridade no SP."
     },
-    "trek_emonda_alr": {
-      "marca": "trek",
-      "modelo": "Émonda ALR",
-      "tier": "A",
-      "categoria": "speed",
-      "aliases": [
-        "emonda alr",
-        "émonda alr",
-        "trek emonda alr",
-        "emonda alr 4",
-        "emonda alr 5",
-        "emonda alr 6",
-        "emonda alr 7",
-        "emonda aluminio",
-        "emonda alu"
-      ],
-      "anos": {
-        "2014": {
-          "material": "aluminio",
-          "grupo_oem": "105 5800",
-          "peso_kg": 8.8,
-          "freio": "rim"
-        },
-        "2015": {
-          "material": "aluminio",
-          "grupo_oem": "105 5800",
-          "peso_kg": 8.7,
-          "freio": "rim"
-        },
-        "2016": {
-          "material": "aluminio",
-          "grupo_oem": "105 5800",
-          "peso_kg": 8.6,
-          "freio": "rim"
-        },
-        "2017": {
-          "material": "aluminio",
-          "grupo_oem": "105 5800",
-          "peso_kg": 8.6,
-          "freio": "rim"
-        },
-        "2018": {
-          "material": "aluminio",
-          "grupo_oem": "ultegra r8000",
-          "peso_kg": 8.5,
-          "freio": "rim"
-        },
-        "2019": {
-          "material": "aluminio",
-          "grupo_oem": "ultegra r8000",
-          "peso_kg": 8.5,
-          "freio": "rim"
-        },
-        "2020": {
-          "material": "aluminio",
-          "grupo_oem": "105 r7000",
-          "peso_kg": 8.5,
-          "freio": "rim"
-        },
-        "2021": {
-          "material": "aluminio",
-          "grupo_oem": "105 r7000",
-          "peso_kg": 8.5,
-          "freio": "rim"
-        },
-        "2022": {
-          "material": "aluminio",
-          "grupo_oem": "105 r7000",
-          "peso_kg": 8.4,
-          "freio": "rim"
-        }
-      },
-      "notas": "Quadro alumínio Alpha Platinum. Garfo FULL CARBON em todos os anos. Rim brake em toda a linha. ALR 4=105, ALR 5=105, ALR 6=Ultegra, ALR 7=Ultegra. Descontinuada em 2022."
-    },
     "trek_emonda_sl": {
       "marca": "trek",
       "modelo": "Émonda SL",
@@ -3081,6 +3007,154 @@
         }
       },
       "notas": "All-road/gravel-adjacent BMC. Alumínio, clearance 34mm, rack/fender mounts. Muito abaixo do threshold normalmente — peso alto, alu, mas tier A da marca."
+    },
+    "trek_emonda_alr_105": {
+      "marca": "trek",
+      "modelo": "Émonda ALR 4/5",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "emonda alr 4",
+        "emonda alr 5",
+        "emonda alr4",
+        "emonda alr5",
+        "trek emonda alr 4",
+        "trek emonda alr 5"
+      ],
+      "anos": {
+        "2014": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.8,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.7,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "aluminio",
+          "grupo_oem": "105 5800",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2020": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2021": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2022": {
+          "material": "aluminio",
+          "grupo_oem": "105 r7000",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        }
+      },
+      "notas": "ALR 4 e ALR 5 = grupo 105. Garfo carbono full. Rim brake toda a linha."
+    },
+    "trek_emonda_alr_ultegra": {
+      "marca": "trek",
+      "modelo": "Émonda ALR 6/7",
+      "tier": "A",
+      "categoria": "speed",
+      "aliases": [
+        "emonda alr 6",
+        "emonda alr 7",
+        "emonda alr6",
+        "emonda alr7",
+        "trek emonda alr 6",
+        "trek emonda alr 7",
+        "emonda alr",
+        "emonda alr 2",
+        "trek emonda alr",
+        "emonda aluminio",
+        "emonda alu",
+        "emonda alr ultegra"
+      ],
+      "anos": {
+        "2014": {
+          "material": "aluminio",
+          "grupo_oem": "ultegra",
+          "peso_kg": 8.6,
+          "freio": "rim"
+        },
+        "2015": {
+          "material": "aluminio",
+          "grupo_oem": "ultegra",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2016": {
+          "material": "aluminio",
+          "grupo_oem": "ultegra",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2017": {
+          "material": "aluminio",
+          "grupo_oem": "ultegra",
+          "peso_kg": 8.5,
+          "freio": "rim"
+        },
+        "2018": {
+          "material": "aluminio",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        },
+        "2019": {
+          "material": "aluminio",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        },
+        "2020": {
+          "material": "aluminio",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        },
+        "2021": {
+          "material": "aluminio",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.4,
+          "freio": "rim"
+        },
+        "2022": {
+          "material": "aluminio",
+          "grupo_oem": "ultegra r8000",
+          "peso_kg": 8.3,
+          "freio": "rim"
+        }
+      },
+      "notas": "ALR 6 e ALR 7 = grupo Ultegra. Alias genérico 'emonda alr' cai aqui (mais frequente no mercado). Garfo carbono full. Rim brake toda a linha."
     }
   },
   "mtb": {
