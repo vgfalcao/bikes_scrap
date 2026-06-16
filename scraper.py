@@ -994,7 +994,11 @@ def firecrawl_search(query: str, limit: int = 5) -> list[dict]:
                 "Authorization": f"Bearer {FIRECRAWL_API_KEY}",
                 "Content-Type":  "application/json",
             },
-            json={"query": query, "limit": limit},
+            json={
+                "query": query,
+                "limit": limit,
+                "scrapeOptions": {"formats": ["markdown"], "onlyMainContent": False},
+            },
             timeout=30,
         )
         if resp.status_code != 200:
@@ -1027,7 +1031,7 @@ def scrape_bikemagazine(queries: list = None) -> list:
     seen_urls: set = set()
 
     for query in queries:
-        log.info(f"Bikemagazine search: '{query[:60]}'")
+        log.info(f"Bikemagazine search: '{query}'")
         hits = firecrawl_search(query, limit=5)
         log.info(f"  {len(hits)} resultados")
 
