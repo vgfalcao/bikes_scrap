@@ -1,113 +1,149 @@
 {
-  "updated_at": "2025-06-01",
-  "confidence": "high",
+  "updated_at": "2026-09-28",
+  "confidence": "medium",
   "speed": {
     "alu_105": {
       "p25": 3800,
       "median": 5200,
       "p75": 6400,
       "novo_loja": 11900,
-      "novo_ml": 9800
+      "novo_ml": 9800,
+      "median_base": 5200
     },
     "carbono_105": {
       "p25": 6800,
       "median": 9000,
       "p75": 11500,
       "novo_loja": 18500,
-      "novo_ml": 15500
+      "novo_ml": 15500,
+      "median_base": 9000
     },
     "carbono_ultegra": {
       "p25": 9500,
       "median": 13000,
       "p75": 16000,
       "novo_loja": 26000,
-      "novo_ml": 22000
+      "novo_ml": 22000,
+      "median_base": 13000
     },
     "carbono_di2": {
       "p25": 14000,
       "median": 19000,
       "p75": 25000,
       "novo_loja": 42000,
-      "novo_ml": 36000
+      "novo_ml": 36000,
+      "median_base": 19000
     },
     "alu_ultegra": {
       "p25": 5500,
       "median": 7500,
       "p75": 9500,
       "novo_loja": 16000,
-      "novo_ml": 13500
+      "novo_ml": 13500,
+      "median_base": 7500
     },
     "alu_rival": {
       "p25": 4500,
       "median": 6000,
       "p75": 7500,
       "novo_loja": 13000,
-      "novo_ml": 11000
+      "novo_ml": 11000,
+      "median_base": 6000
     },
     "alu_generico": {
       "p25": 3800,
       "median": 5200,
       "p75": 6400,
       "novo_loja": 11900,
-      "novo_ml": 9800
+      "novo_ml": 9800,
+      "median_base": 5200
     },
     "carbono_generico": {
       "p25": 6800,
       "median": 9000,
       "p75": 11500,
       "novo_loja": 18500,
-      "novo_ml": 15500
+      "novo_ml": 15500,
+      "median_base": 9000
     }
   },
   "mtb": {
     "alu_slx_rockshox": {
       "p25": 4800,
-      "median": 6800,
+      "median": 4750,
       "p75": 8500,
       "novo_loja": 14000,
-      "novo_ml": 12000
+      "novo_ml": 12000,
+      "median_base": 6800,
+      "n": 13,
+      "calibrado_em": "2026-09-28",
+      "origem": "grupo:alu"
     },
     "alu_xt_fox": {
       "p25": 6500,
-      "median": 9000,
+      "median": 6287,
       "p75": 11000,
       "novo_loja": 18000,
-      "novo_ml": 15000
+      "novo_ml": 15000,
+      "median_base": 9000,
+      "n": 2,
+      "calibrado_em": "2026-09-28",
+      "origem": "grupo:alu"
     },
     "carbono_slx": {
       "p25": 7000,
-      "median": 10000,
+      "median": 10500,
       "p75": 13000,
       "novo_loja": 20000,
-      "novo_ml": 17000
+      "novo_ml": 17000,
+      "median_base": 10000,
+      "n": 1,
+      "calibrado_em": "2026-09-28",
+      "origem": "grupo:carbono"
     },
     "carbono_xt_fox": {
       "p25": 9000,
-      "median": 12000,
+      "median": 12599,
       "p75": 15000,
       "novo_loja": 28000,
-      "novo_ml": 24000
+      "novo_ml": 24000,
+      "median_base": 12000,
+      "n": 2,
+      "calibrado_em": "2026-09-28",
+      "origem": "grupo:carbono"
     },
     "carbono_xtr_eagle": {
       "p25": 13000,
-      "median": 18000,
+      "median": 18899,
       "p75": 24000,
       "novo_loja": 40000,
-      "novo_ml": 34000
+      "novo_ml": 34000,
+      "median_base": 18000,
+      "n": 3,
+      "calibrado_em": "2026-09-28",
+      "origem": "grupo:carbono"
     },
     "alu_generico": {
       "p25": 4800,
-      "median": 6800,
+      "median": 4750,
       "p75": 8500,
       "novo_loja": 14000,
-      "novo_ml": 12000
+      "novo_ml": 12000,
+      "median_base": 6800,
+      "n": 9,
+      "calibrado_em": "2026-09-28",
+      "origem": "grupo:alu"
     },
     "carbono_generico": {
       "p25": 7000,
-      "median": 10000,
+      "median": 10500,
       "p75": 13000,
       "novo_loja": 20000,
-      "novo_ml": 17000
+      "novo_ml": 17000,
+      "median_base": 10000,
+      "n": 6,
+      "calibrado_em": "2026-09-28",
+      "origem": "grupo:carbono"
     }
   },
   "tiers": {
