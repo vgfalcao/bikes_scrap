@@ -17,7 +17,8 @@ import requests
 from bs4 import BeautifulSoup
 from db_matcher import load_db, enrich_from_db
 from benchmarks_updater import (load_history, save_history, record_samples,
-                                prune_history, recalibrate, log_relatorio)
+                                prune_history, dedup_history, recalibrate,
+                                log_relatorio)
 
 # ──────────────────────────────────────────────────────────────
 # CONFIGURAÇÃO
@@ -1879,7 +1880,7 @@ def main():
     # laço em que o benchmark persegue os próprios achados.
     try:
         amostra  = oportunidades + abaixo_thresh
-        history  = load_history()
+        history  = dedup_history(load_history())
         history  = prune_history(record_samples(amostra, history))
         novos_bm, rel = recalibrate(benchmarks, history)
         log_relatorio(rel)

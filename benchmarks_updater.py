@@ -118,7 +118,7 @@ def record_samples(enriched: list, history: dict, hoje: str | None = None) -> di
     """
     hoje = hoje or _hoje()
     samples = history.setdefault("samples", {})
-    novos = atualizados = 0
+    novos = atualizados = movidos = 0
 
     for e in enriched:
         bench_key = e.get("bench_key")
@@ -131,6 +131,16 @@ def record_samples(enriched: list, history: dict, hoje: str | None = None) -> di
             continue
 
         bucket = f"{cat}:{bench_key}"
+        # Dedup GLOBAL, nao por bucket. Quando a classificacao de um anuncio
+        # muda — correcao no bench_key, match novo no banco de bikes — ele
+        # precisa sair do bucket antigo. Sem isso o mesmo anuncio passa a
+        # existir nos dois e e contado duas vezes na deriva de grupo, alem de
+        # manter vivo um bucket que ja nao o representa.
+        for outro, alvo_outro in samples.items():
+            if outro != bucket and lid in alvo_outro:
+                del alvo_outro[lid]
+                movidos += 1
+
         alvo = samples.setdefault(bucket, {})
         if lid in alvo:
             atualizados += 1
@@ -138,8 +148,42 @@ def record_samples(enriched: list, history: dict, hoje: str | None = None) -> di
             novos += 1
         alvo[lid] = {"p": int(preco), "d": hoje}
 
+    for bucket in [b for b, v in samples.items() if not v]:
+        del samples[bucket]
+
     history["updated_at"] = hoje
-    log.info(f"Benchmarks: {novos} amostras novas, {atualizados} atualizadas")
+    log.info(f"Benchmarks: {novos} amostras novas, {atualizados} atualizadas"
+             + (f", {movidos} reclassificadas" if movidos else ""))
+    return history
+
+
+def dedup_history(history: dict) -> dict:
+    """
+    Garante um unico registro por anuncio em todo o historico.
+
+    Necessario uma vez para limpar o que a versao anterior de record_samples
+    duplicou ao reclassificar, e como rede de seguranca depois disso.
+    Em caso de conflito mantem o registro mais recente.
+    """
+    samples = history.get("samples", {})
+    melhor: dict = {}
+    for bucket, alvo in samples.items():
+        for lid, s in alvo.items():
+            atual = melhor.get(lid)
+            if atual is None or s.get("d", "") >= atual[1].get("d", ""):
+                melhor[lid] = (bucket, s)
+
+    removidos = 0
+    for bucket, alvo in list(samples.items()):
+        for lid in list(alvo):
+            if melhor.get(lid, (None,))[0] != bucket:
+                del alvo[lid]
+                removidos += 1
+        if not alvo:
+            del samples[bucket]
+
+    if removidos:
+        log.info(f"Benchmarks: {removidos} registros duplicados removidos do histórico")
     return history
 
 
