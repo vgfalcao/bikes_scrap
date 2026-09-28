@@ -70,6 +70,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
           DIAG:              ${{ secrets.DIAG }}
+          FORCE_NOTIFY:      ${{ inputs.force_notify }}
         run: |
           python scraper.py
 

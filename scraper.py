@@ -1480,7 +1480,7 @@ def render_condicional_html(l: dict, rank: int, cond: dict) -> str:
 def render_lista_categoria(items: list, cat: str) -> str:
     """
     Listagem simples de TODAS as oportunidades da categoria, ordenadas por score:
-    nome da bike (link), score e VP.
+    nome da bike (link), preco, score e VP.
 
     Usa <table> em vez de flexbox: o Gmail preserva display:flex mas descarta
     flex-wrap, o que fazia os itens alem do 3o sairem da largura util do e-mail
@@ -1519,6 +1519,9 @@ def render_lista_categoria(items: list, cat: str) -> str:
       <td style="padding:10px 8px;border-bottom:1px solid #f4f3ef;vertical-align:middle">
         <a href="{l['url']}" style="font-size:13px;font-weight:{name_fw};color:#1c1b18;text-decoration:none;line-height:1.35">{l['title']}</a>
       </td>
+      <td align="right" style="padding:10px 4px;border-bottom:1px solid #f4f3ef;vertical-align:middle;white-space:nowrap">
+        <span style="font-size:12px;font-weight:700;color:#0b7a6e">{l.get('price','—')}</span>
+      </td>
       <td align="right" style="padding:10px 4px;border-bottom:1px solid #f4f3ef;vertical-align:middle;white-space:nowrap">{pill(l.get('score', 0))}</td>
       <td align="right" style="padding:10px 16px 10px 4px;border-bottom:1px solid #f4f3ef;vertical-align:middle;white-space:nowrap">{pill(l.get('vp', 0))}</td>
     </tr>"""
@@ -1532,6 +1535,7 @@ def render_lista_categoria(items: list, cat: str) -> str:
     <tr>
       <td style="padding:6px 4px 6px 16px;border-bottom:1px solid #f0eeea"></td>
       <td style="padding:6px 8px;border-bottom:1px solid #f0eeea;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#b0afa8;font-family:monospace">anuncio</td>
+      <td align="right" style="padding:6px 4px;border-bottom:1px solid #f0eeea;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#b0afa8;font-family:monospace">preco</td>
       <td align="right" style="padding:6px 4px;border-bottom:1px solid #f0eeea;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#b0afa8;font-family:monospace">score</td>
       <td align="right" style="padding:6px 16px 6px 4px;border-bottom:1px solid #f0eeea;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#b0afa8;font-family:monospace">vp</td>
     </tr>{rows}
@@ -1658,8 +1662,11 @@ def send_email(listings: list, benchmarks: dict, total_analyzed: int, condiciona
 # ──────────────────────────────────────────────────────────────
 
 def main():
-    diag = os.environ.get("DIAG", "0") == "1"  # ativa via secret DIAG=1
+    diag  = os.environ.get("DIAG", "0") == "1"  # ativa via secret DIAG=1
+    force = os.environ.get("FORCE_NOTIFY", "false").strip().lower() in ("1","true","yes")
     log.info("Bike Monitor iniciando...")
+    if force:
+        log.info("FORCE_NOTIFY ativo: ignorando seen_ids e enviando e-mail mesmo sem resultado")
     seen       = load_seen()
     benchmarks = load_benchmarks()
     bike_db    = load_db("bikes_database.json")
@@ -1678,9 +1685,9 @@ def main():
         for l in raw[:10]:
             log.info(f"  [{l['source']}] {l['title'][:70]} | {l['price']}")
 
-    # Filtra novos
-    novos = [l for l in raw if l["id"] not in seen]
-    log.info(f"Novos (não vistos antes): {len(novos)}")
+    # Filtra novos (com FORCE_NOTIFY, reavalia tudo — inclusive o ja notificado)
+    novos = list(raw) if force else [l for l in raw if l["id"] not in seen]
+    log.info(f"{'Reavaliados (force)' if force else 'Novos (não vistos antes)'}: {len(novos)}")
 
     # Deduplica por ID dentro do batch
     deduped, ids_batch = [], set()
@@ -1759,8 +1766,10 @@ def main():
 
     log.info(f"  CONDICIONAIS:      {len(condicionais)}")
 
-    if oportunidades or condicionais:
+    if oportunidades or condicionais or force:
         send_email(oportunidades, benchmarks, len(deduped), condicionais)
+    else:
+        log.info("Nada a notificar — e-mail nao enviado")
 
     # Marca como vistos:
     # - Notificados (oportunidades + condicionais) → não renotifica
