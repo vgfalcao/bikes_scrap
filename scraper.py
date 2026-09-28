@@ -16,6 +16,8 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 from db_matcher import load_db, enrich_from_db
+from benchmarks_updater import (load_history, save_history, record_samples,
+                                prune_history, recalibrate, log_relatorio)
 
 # ──────────────────────────────────────────────────────────────
 # CONFIGURAÇÃO
@@ -35,7 +37,9 @@ CONFIG = {
 
 # ──────────────────────────────────────────────────────────────
 # BENCHMARKS EMBUTIDOS (fallback se benchmarks.json ausente)
-# Atualizar via benchmarks_updater.py 1x/mês
+# p25/median/p75 sao recalibrados a cada run por benchmarks_updater.py a
+# partir dos anuncios coletados. novo_loja/novo_ml nao se derivam de anuncio
+# de usado: continuam manuais e sao os unicos numeros ainda de 2025-06-01.
 # ──────────────────────────────────────────────────────────────
 
 BENCHMARKS_DEFAULT = {
@@ -1683,7 +1687,7 @@ def build_email_html(listings: list, run_time: str, total_analyzed: int, benchma
   <div style="background:#f7f6f2;padding:12px 24px;border-top:1px solid #edecea;display:flex;justify-content:space-between;align-items:center">
     <div style="font-size:9px;color:#9b9a94;font-family:monospace;line-height:1.7">
       bike-radar · vgfalcao@gmail.com · github actions<br>
-      benchmarks usados: {bench_date} ({bench_conf}) · novos: trimestral<br>
+      benchmarks usados: {bench_date} ({bench_conf}) · usados: auto-calibrado por run<br>
       fontes: olx · bazarbikes · semexe
     </div>
     <div style="font-size:9px;color:#9b9a94;font-family:monospace">
@@ -1826,6 +1830,26 @@ def main():
             log.info("── DIAGNÓSTICO: oportunidades encontradas ──")
             for e in oportunidades:
                 log.info(f"  score={e.get('score')} vp={e.get('vp')} | {e['title'][:60]} | {e['price']}")
+
+    # ── Calibração dos benchmarks ───────────────────────────────
+    # Amostra = tudo que passou pelos filtros duros, não só as oportunidades:
+    # usar só as oportunidades puxaria a mediana para baixo a cada run, num
+    # laço em que o benchmark persegue os próprios achados.
+    try:
+        amostra  = oportunidades + abaixo_thresh
+        history  = load_history()
+        history  = prune_history(record_samples(amostra, history))
+        novos_bm, rel = recalibrate(benchmarks, history)
+        log_relatorio(rel)
+        save_history(history)
+        if novos_bm != benchmarks:
+            Path(CONFIG["bench_file"]).write_text(
+                json.dumps(novos_bm, indent=2, ensure_ascii=False))
+            log.info(f"benchmarks.json atualizado ({rel['confidence']})")
+        benchmarks = novos_bm
+    except Exception as e:
+        # Calibração é acessória: se falhar, a run segue com os valores antigos.
+        log.error(f"Falha na calibração dos benchmarks: {e}")
 
     # ── Oportunidades condicionais (não passam real, passam com desconto) ──
     condicionais = []

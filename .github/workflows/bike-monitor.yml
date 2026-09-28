@@ -34,6 +34,9 @@ jobs:
   monitor:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # Necessário para commitar benchmarks.json e bench_history.json de volta.
+    permissions:
+      contents: write
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -82,6 +85,31 @@ jobs:
           FORCE_NOTIFY:      ${{ inputs.force_notify }}
         run: |
           python scraper.py
+
+      # 5b. Commita a calibração dos benchmarks de volta no repo.
+      #     Cache não serve aqui: se for despejado, perde-se todo o histórico
+      #     acumulado e os benchmarks voltam a congelar. No repo fica durável
+      #     e auditável (dá para ver a mediana andando commit a commit).
+      - name: Commit benchmarks calibrados
+        if: always()
+        continue-on-error: true
+        run: |
+          if [ -z "$(git status --porcelain benchmarks.json bench_history.json)" ]; then
+            echo "Nenhuma mudança na calibração — nada a commitar"
+            exit 0
+          fi
+          git config user.name  "bike-radar[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add benchmarks.json bench_history.json
+          git commit -m "chore(benchmarks): calibração automática $(date -u +%Y-%m-%d)"
+          # Rebase antes do push: runs concorrentes ou commits manuais no meio.
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && \
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            echo "push falhou (tentativa $i), refazendo rebase..."
+            sleep $((i * 5))
+          done
+          echo "::warning::Não foi possível commitar a calibração dos benchmarks"
 
       # 6. Salva o seen_ids.json atualizado de volta no cache
       - name: Save seen IDs cache
