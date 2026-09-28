@@ -1,6 +1,6 @@
 {
-  "updated_at": "2025-06-01",
-  "confidence": "high",
+  "updated_at": "2026-09-28",
+  "confidence": "low",
   "speed": {
     "alu_105": {
       "p25": 3800,
@@ -47,11 +47,13 @@
   },
   "mtb": {
     "alu_slx_rockshox": {
-      "p25": 4800,
-      "median": 6800,
-      "p75": 8500,
+      "p25": 2590,
+      "median": 6000,
+      "p75": 10000,
       "novo_loja": 14000,
-      "novo_ml": 12000
+      "novo_ml": 12000,
+      "n": 13,
+      "calibrado_em": "2026-09-28"
     },
     "alu_xt_fox": {
       "p25": 6500,
