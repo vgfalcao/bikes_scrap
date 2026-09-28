@@ -1479,7 +1479,8 @@ def render_condicional_html(l: dict, rank: int, cond: dict) -> str:
 
 def render_top3_cards(items: list, cat: str) -> str:
     """
-    Renderiza linha de até 3 cards lado a lado para uma categoria.
+    Renderiza grid com TODOS os cards da categoria (não só os 3 primeiros),
+    ordenados por score, em wrap de 3 por linha.
     card #1 tem borda de destaque verde.
     Clique no card abre o anúncio diretamente.
     """
@@ -1488,7 +1489,7 @@ def render_top3_cards(items: list, cat: str) -> str:
 
     bg,  fg  = CAT_COLORS.get(cat, CAT_COLORS["speed"])
     label    = "speed / road" if cat == "speed" else "MTB trail 29"
-    top3     = sorted(items, key=lambda x: x.get("score", 0), reverse=True)[:3]
+    ranked   = sorted(items, key=lambda x: x.get("score", 0), reverse=True)
     n_label  = f"{len(items)} oportunidade{'s' if len(items)>1 else ''} &middot; por score"
 
     def score_pill(val, max_val):
@@ -1538,7 +1539,7 @@ def render_top3_cards(items: list, cat: str) -> str:
         subtitle = " &middot; ".join(sub_parts[:5])
 
         return f"""
-<a href="{l['url']}" style="display:flex;flex-direction:column;text-decoration:none;background:#ffffff;border:{border};border-radius:8px;overflow:hidden;flex:1;min-width:0">
+<a href="{l['url']}" style="display:flex;flex-direction:column;text-decoration:none;background:#ffffff;border:{border};border-radius:8px;overflow:hidden;flex:1 1 180px;min-width:180px;max-width:100%">
   <div style="padding:10px 12px 8px;flex:1">
     <div style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:700;font-family:monospace;background:{rank_bg};color:{rank_fg};margin-bottom:6px">{rank}</div>
     <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
@@ -1562,20 +1563,20 @@ def render_top3_cards(items: list, cat: str) -> str:
   </div>
 </a>"""
 
-    # Monta os 3 slots (placeholder se < 3)
+    # Monta os slots — um card por oportunidade, sem limite
     slots = ""
-    for i, l in enumerate(top3, 1):
+    for i, l in enumerate(ranked, 1):
         slots += make_card(l, i)
-    # Placeholder para slots vazios
-    for _ in range(3 - len(top3)):
-        slots += '<div style="flex:1;min-width:0;background:#f7f6f2;border-radius:8px;border:0.5px dashed #e0e0e0;display:flex;align-items:center;justify-content:center;min-height:130px"><span style="font-size:11px;color:#b0afa8">—</span></div>'
+    # Placeholder só quando não há nenhuma oportunidade (mantém a faixa com "—")
+    if not ranked:
+        slots = '<div style="flex:1 1 180px;min-width:180px;background:#f7f6f2;border-radius:8px;border:0.5px dashed #e0e0e0;display:flex;align-items:center;justify-content:center;min-height:130px"><span style="font-size:11px;color:#b0afa8">—</span></div>'
 
     return f"""
   <div style="display:flex;align-items:center;gap:8px;padding:12px 16px 8px;border-bottom:1px solid #f0eeea">
     <span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:{bg};color:{fg}">{label}</span>
     <span style="font-size:11px;color:#9b9a94;font-family:monospace">{n_label}</span>
   </div>
-  <div style="display:flex;gap:8px;padding:10px 14px 14px">
+  <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 14px">
     {slots}
   </div>"""
 
