@@ -1477,108 +1477,65 @@ def render_condicional_html(l: dict, rank: int, cond: dict) -> str:
 
 
 
-def render_top3_cards(items: list, cat: str) -> str:
+def render_lista_categoria(items: list, cat: str) -> str:
     """
-    Renderiza grid com TODOS os cards da categoria (não só os 3 primeiros),
-    ordenados por score, em wrap de 3 por linha.
-    card #1 tem borda de destaque verde.
-    Clique no card abre o anúncio diretamente.
+    Listagem simples de TODAS as oportunidades da categoria, ordenadas por score:
+    nome da bike (link), score e VP.
+
+    Usa <table> em vez de flexbox: o Gmail preserva display:flex mas descarta
+    flex-wrap, o que fazia os itens alem do 3o sairem da largura util do e-mail
+    e serem cortados. Tabela e a unica primitiva de layout que Gmail, Apple Mail
+    e Outlook respeitam igualmente.
     """
     if not items:
         return ""
 
-    bg,  fg  = CAT_COLORS.get(cat, CAT_COLORS["speed"])
-    label    = "speed / road" if cat == "speed" else "MTB trail 29"
-    ranked   = sorted(items, key=lambda x: x.get("score", 0), reverse=True)
-    n_label  = f"{len(items)} oportunidade{'s' if len(items)>1 else ''} &middot; por score"
+    bg, fg  = CAT_COLORS.get(cat, CAT_COLORS["speed"])
+    label   = "speed / road" if cat == "speed" else "MTB trail 29"
+    ranked  = sorted(items, key=lambda x: x.get("score", 0), reverse=True)
+    n_label = f"{len(items)} oportunidade{'s' if len(items)>1 else ''} &middot; por score"
 
-    def score_pill(val, max_val):
+    def pill(val):
         if val >= 65:
             bg_p, fg_p = "#e1f5ee", "#085041"
         elif val >= 55:
             bg_p, fg_p = "#faeeda", "#633806"
         else:
             bg_p, fg_p = "#f1efe8", "#5f5e5a"
-        return f'<span style="font-size:10px;font-family:monospace;font-weight:500;padding:2px 7px;border-radius:3px;background:{bg_p};color:{fg_p}">{val}</span>'
+        return (f'<span style="font-size:11px;font-family:monospace;font-weight:600;'
+                f'padding:2px 7px;border-radius:3px;background:{bg_p};color:{fg_p}">{val}</span>')
 
-    def make_card(l, rank):
-        is_top   = rank == 1
-        border   = "2px solid #0b7a6e" if is_top else "0.5px solid #e0e0e0"
+    rows = ""
+    for i, l in enumerate(ranked, 1):
+        is_top   = i == 1
         rank_bg  = "#e1f5ee" if is_top else "#f4f3ef"
         rank_fg  = "#085041" if is_top else "#9b9a94"
-        sc       = l.get("score", 0)
-        vp       = l.get("vp",    0)
-        price_int = l.get("price_int", 0) or 0
-        median   = l.get("bench_median", 0) or 0
-        novo_loja= l.get("vp_bd", {}).get("novo_loja", 0) or 0
-        pct_used = round((median - price_int) / median * 100) if median and price_int else "?"
-        pct_loja = l.get("vp_bd", {}).get("pct_desconto_loja", "?")
-
-        src_bg, src_fg   = SOURCE_COLORS.get(l["source"], ("#f0eeea","#444"))
-        tier             = l.get("vp_bd", {}).get("tier", "C")
-        tier_bg, tier_fg = TIER_COLORS.get(tier, TIER_COLORS["C"])
-        cat_bg2, cat_fg2 = CAT_COLORS.get(l.get("category","speed"), CAT_COLORS["speed"])
-        mat      = l.get("material","")
-        mat_bg   = "#f1eefe" if "carbono" in mat else "#f1f0ea"
-        mat_fg   = "#534ab7" if "carbono" in mat else "#5f5e5a"
-        mat_lbl  = "carbono" if "carbono" in mat else "alumínio"
-
-        grupo_src  = l.get("grupo_source","")
-        grupo_raw  = l.get("grupo","—")
-        grupo_disp = f"{grupo_raw} ({'DB' if grupo_src!='titulo' else 'título'})" if grupo_src and grupo_src!='nenhum' else grupo_raw
-
-        sub_parts = [p for p in [
-            mat_lbl,
-            f"Tam {l.get('size','')}" if l.get("size") else "",
-            grupo_disp,
-            l.get("suspensao","") if l.get("category")=="mtb" else "",
-            str(l.get("year","")) if l.get("year") else "",
-            l.get("city",""),
-            "NF" if l.get("nf") else "",
-        ] if p and p not in ("—","")]
-        subtitle = " &middot; ".join(sub_parts[:5])
-
-        return f"""
-<a href="{l['url']}" style="display:flex;flex-direction:column;text-decoration:none;background:#ffffff;border:{border};border-radius:8px;overflow:hidden;flex:1 1 180px;min-width:180px;max-width:100%">
-  <div style="padding:10px 12px 8px;flex:1">
-    <div style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:700;font-family:monospace;background:{rank_bg};color:{rank_fg};margin-bottom:6px">{rank}</div>
-    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
-      <span style="font-size:9px;padding:1px 5px;border-radius:3px;font-family:monospace;font-weight:500;background:{src_bg};color:{src_fg}">{l['source']}</span>
-      <span style="font-size:9px;padding:1px 5px;border-radius:3px;font-family:monospace;font-weight:500;background:{tier_bg};color:{tier_fg}">Tier {tier}</span>
-      <span style="font-size:9px;padding:1px 5px;border-radius:3px;font-family:monospace;font-weight:500;background:{mat_bg};color:{mat_fg}">{mat_lbl}</span>
-    </div>
-    <div style="font-size:12px;font-weight:600;color:#1c1b18;line-height:1.35;margin-bottom:3px">{l['title']}</div>
-    <div style="font-size:10px;color:#6a6960;line-height:1.4">{subtitle}</div>
-    <div style="display:flex;gap:5px;margin-top:7px">
-      {score_pill(sc, 100)}&nbsp;<span style="font-size:9px;color:#9b9a94;font-family:monospace;padding-top:3px">score</span>
-      &nbsp;{score_pill(vp, 100)}&nbsp;<span style="font-size:9px;color:#9b9a94;font-family:monospace;padding-top:3px">VP</span>
-    </div>
-  </div>
-  <div style="padding:8px 12px;border-top:1px solid #f0eeea;display:flex;justify-content:space-between;align-items:center">
-    <div>
-      <div style="font-size:14px;font-weight:700;color:#0b7a6e">{l['price']}</div>
-      <div style="font-size:9px;color:#9b9a94;font-family:monospace">&minus;{pct_used}% usados &middot; &minus;{pct_loja}% loja</div>
-    </div>
-    <span style="font-size:11px;color:#9b9a94">&#8594;</span>
-  </div>
-</a>"""
-
-    # Monta os slots — um card por oportunidade, sem limite
-    slots = ""
-    for i, l in enumerate(ranked, 1):
-        slots += make_card(l, i)
-    # Placeholder só quando não há nenhuma oportunidade (mantém a faixa com "—")
-    if not ranked:
-        slots = '<div style="flex:1 1 180px;min-width:180px;background:#f7f6f2;border-radius:8px;border:0.5px dashed #e0e0e0;display:flex;align-items:center;justify-content:center;min-height:130px"><span style="font-size:11px;color:#b0afa8">—</span></div>'
+        name_fw  = "700" if is_top else "500"
+        rows += f"""
+    <tr>
+      <td style="padding:10px 4px 10px 16px;border-bottom:1px solid #f4f3ef;vertical-align:middle;width:26px">
+        <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;border-radius:50%;font-size:9px;font-weight:700;font-family:monospace;background:{rank_bg};color:{rank_fg}">{i}</span>
+      </td>
+      <td style="padding:10px 8px;border-bottom:1px solid #f4f3ef;vertical-align:middle">
+        <a href="{l['url']}" style="font-size:13px;font-weight:{name_fw};color:#1c1b18;text-decoration:none;line-height:1.35">{l['title']}</a>
+      </td>
+      <td align="right" style="padding:10px 4px;border-bottom:1px solid #f4f3ef;vertical-align:middle;white-space:nowrap">{pill(l.get('score', 0))}</td>
+      <td align="right" style="padding:10px 16px 10px 4px;border-bottom:1px solid #f4f3ef;vertical-align:middle;white-space:nowrap">{pill(l.get('vp', 0))}</td>
+    </tr>"""
 
     return f"""
   <div style="display:flex;align-items:center;gap:8px;padding:12px 16px 8px;border-bottom:1px solid #f0eeea">
     <span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:{bg};color:{fg}">{label}</span>
     <span style="font-size:11px;color:#9b9a94;font-family:monospace">{n_label}</span>
   </div>
-  <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 14px">
-    {slots}
-  </div>"""
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse">
+    <tr>
+      <td style="padding:6px 4px 6px 16px;border-bottom:1px solid #f0eeea"></td>
+      <td style="padding:6px 8px;border-bottom:1px solid #f0eeea;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#b0afa8;font-family:monospace">anuncio</td>
+      <td align="right" style="padding:6px 4px;border-bottom:1px solid #f0eeea;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#b0afa8;font-family:monospace">score</td>
+      <td align="right" style="padding:6px 16px 6px 4px;border-bottom:1px solid #f0eeea;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#b0afa8;font-family:monospace">vp</td>
+    </tr>{rows}
+  </table>"""
 
 def render_condicionais_html(items: list) -> str:
     if not items:
@@ -1603,7 +1560,7 @@ def build_email_html(listings: list, run_time: str, total_analyzed: int, benchma
     def render_category(items: list, cat: str) -> str:
         if not items:
             return ""
-        return render_top3_cards(items, cat)
+        return render_lista_categoria(items, cat)
 
     return f"""<!DOCTYPE html>
 <html lang="pt-BR">
