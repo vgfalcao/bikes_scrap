@@ -18,11 +18,17 @@ on:
   workflow_dispatch:
     inputs:
       force_notify:
-        description: "Enviar e-mail mesmo sem novidades"
+        description: "Reavaliar tudo (ignora seen_ids) e enviar e-mail mesmo sem novidades"
         required: false
         default: "false"
         type: choice
         options: ["false", "true"]
+      diag:
+        description: "Logs de diagnóstico detalhados"
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
 
 jobs:
   monitor:
@@ -69,7 +75,10 @@ jobs:
           PRECO_MAX:         ${{ secrets.PRECO_MAX }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
-          DIAG:              ${{ secrets.DIAG }}
+          # DIAG deixou de ser secret: o valor "1" fazia o GitHub mascarar TODO
+          # digito 1 nos logs ("score= 4***", "grupo=***05"), deixando o proprio
+          # diagnostico ilegivel. Em runs agendadas inputs.diag vem vazio -> "1".
+          DIAG:              ${{ inputs.diag || '1' }}
           FORCE_NOTIFY:      ${{ inputs.force_notify }}
         run: |
           python scraper.py

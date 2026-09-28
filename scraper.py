@@ -321,15 +321,91 @@ def extract_weight(text: str) -> float | None:
         return float(m.group(1).replace(",", "."))
     return None
 
-def extract_size(text: str) -> str | None:
-    t = norm(text)
-    # tam 54, tamanho 52, size m, tam m, etc.
-    m = re.search(r"(?:tam(?:anho)?|size)[.\s]*([a-z0-9/]+)", t)
+def env_flag(name: str, default: str = "false") -> bool:
+    """
+    Le uma flag booleana do ambiente. Aceita 1/true/yes em qualquer caixa.
+
+    Inputs de workflow_dispatch chegam como string vazia em runs agendadas,
+    entao a string vazia precisa cair no default e nao virar True.
+    """
+    v = (os.environ.get(name) or "").strip().lower()
+    if not v:
+        v = default.strip().lower()
+    return v in ("1", "true", "yes", "on")
+
+CITY_JUNK = ("anuncio", "anuncios", "publicado", "publicados", "telefone",
+             "email", "e-mail", "whatsapp", "contato", "vendedor", "membro",
+             "desde", "categoria", "estado", "cidade", "preco", "marca")
+
+def extract_city(markdown: str) -> str:
+    """
+    Cidade a partir do markdown do anuncio.
+
+    A versao anterior pegava cegamente a linha seguinte a qualquer linha com
+    "Cidade" e acabava colhendo mobilia de tabela — foi assim que
+    "| Anuncios publicados | 29 |" virou a cidade de um anuncio no e-mail.
+    Agora tenta primeiro o valor na mesma linha ("Cidade: X" ou "| Cidade | X |")
+    e valida o resultado: sem digitos, sem pipes, sem rotulo de tabela.
+    """
+    if not markdown:
+        return ""
+
+    def valida(v: str) -> str:
+        v = re.sub(r"[*_`#\[\]]", "", v.strip().strip("|")).strip()
+        if not v or len(v) > 40 or "|" in v:
+            return ""
+        if any(ch.isdigit() for ch in v):
+            return ""
+        if any(j in norm(v) for j in CITY_JUNK):
+            return ""
+        if not re.fullmatch(r"[A-Za-zÀ-ÿ'’.\- ]{2,40}", v):
+            return ""
+        return v
+
+    # "Cidade: Sao Paulo" | "| Cidade | Sao Paulo |" | "**Cidade** Sao Paulo"
+    m = re.search(r"Cidade\s*[:|]\s*([^\n|]+)", markdown, re.I)
     if m:
-        return m.group(1).strip()
-    # standalone: "54cm", "tam 54"
-    m = re.search(r"\b(4[6-9]|5[0-8]|x[sl]|[sml])\b", t)
-    return m.group(1) if m else None
+        v = valida(m.group(1))
+        if v:
+            return v
+    # valor na linha seguinte
+    m = re.search(r"Cidade[^\n]*\n([^\n]+)", markdown, re.I)
+    if m:
+        v = valida(m.group(1))
+        if v:
+            return v
+    return ""
+
+SIZE_ALPHA = {"xxs", "xs", "s", "m", "l", "xl", "xxl"}
+
+def size_plausivel(v: str) -> bool:
+    """Aceita letra de tamanho, polegada de MTB (13–23) ou cm de estrada (44–64)."""
+    if v in SIZE_ALPHA:
+        return True
+    try:
+        n = float(v.replace(",", "."))
+    except ValueError:
+        return False
+    return 13 <= n <= 23 or 44 <= n <= 64
+
+def extract_size(text: str) -> str | None:
+    """
+    Extrai o tamanho do quadro: "tam 54", "tamanho: m", "size 54", "19 pol".
+
+    A palavra-chave precisa estar isolada (\\b). Sem isso, "tam" casava dentro
+    de "Altamira" e devolvia "ira"; e em "quadro tamanho" (sem valor depois) o
+    backtracking reduzia "tamanho" a "tam" e capturava "anho". O valor tambem
+    e validado contra faixas reais de quadro, o que descarta "do", "anho", "ira".
+    """
+    t = norm(text)
+    m = re.search(r"\b(?:tamanho|tam|size)\b[\s:.\-]*([a-z]{1,3}|\d{2}(?:[.,]\d)?)\b", t)
+    if m and size_plausivel(m.group(1)):
+        return m.group(1)
+    # "54cm", "19 pol", "17.5 polegadas"
+    m = re.search(r"\b(\d{2}(?:[.,]\d)?)\s*(?:cm|pol|polegada|polegadas)\b", t)
+    if m and size_plausivel(m.group(1)):
+        return m.group(1)
+    return None
 
 # ──────────────────────────────────────────────────────────────
 # EXTRAÇÃO DE ATRIBUTOS DO TEXTO LIVRE
@@ -1068,10 +1144,7 @@ def scrape_bikemagazine(queries: list = None) -> list:
             ad_id   = ad_id_m.group(1) if ad_id_m else hashlib.md5(url.encode()).hexdigest()[:10]
 
             # Cidade: busca no markdown
-            city = ""
-            city_m = re.search(r"Cidade[^\n]*\n([^\n]+)", markdown)
-            if city_m:
-                city = city_m.group(1).strip()
+            city = extract_city(markdown)
 
             results.append({
                 "id":        make_id("bikemagazine", ad_id),
@@ -1662,8 +1735,8 @@ def send_email(listings: list, benchmarks: dict, total_analyzed: int, condiciona
 # ──────────────────────────────────────────────────────────────
 
 def main():
-    diag  = os.environ.get("DIAG", "0") == "1"  # ativa via secret DIAG=1
-    force = os.environ.get("FORCE_NOTIFY", "false").strip().lower() in ("1","true","yes")
+    diag  = env_flag("DIAG")
+    force = env_flag("FORCE_NOTIFY")
     log.info("Bike Monitor iniciando...")
     if force:
         log.info("FORCE_NOTIFY ativo: ignorando seen_ids e enviando e-mail mesmo sem resultado")
