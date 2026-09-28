@@ -29,14 +29,53 @@ HISTORY_FILE = "bench_history.json"
 
 # Janela movel de amostras consideradas no calculo.
 WINDOW_DAYS = 180
-# Minimo de anuncios distintos num bucket para confiar na sua distribuicao.
-MIN_SAMPLES = 8
+
+# Minimo de anuncios para calibrar a MEDIANA de um bucket direto da sua amostra.
+MIN_SAMPLES = 12
+# Quartis tem muito mais variancia que a mediana: com n=13 o p25 do primeiro
+# bucket calibrado caiu 46% num unico run, o que era ruido, nao mercado.
+MIN_SAMPLES_QUARTIS = 25
+# Minimo para estimar a deriva de um GRUPO (ver GRUPOS abaixo).
+MIN_SAMPLES_GRUPO = 12
+# Minimo para avisar que um bucket observado nao existe em benchmarks.json.
+MIN_SAMPLES_DESCONHECIDO = 5
+
 # Precos fora disto sao erro de digitacao ou placeholder, nao mercado.
 PRICE_FLOOR = 800
 PRICE_CEIL = 80000
 
+# Trava de dispersao: razao p75/p25 acima disto significa que o bucket esta
+# juntando bikes que nao tem relacao entre si, e sua mediana nao representa
+# nada. Observado em producao: mtb:alu_slx_rockshox trouxe anuncios de R$1.550
+# a R$24.000 (p75/p25 = 4,2) — calibrar nisso da aparencia estatistica a lixo.
+# A causa esta na atribuicao de bench_key, nao aqui; esta trava so impede que
+# o problema se propague para o score.
+MAX_DISPERSAO = 3.0
+
 # Chaves que a calibracao pode reescrever. novo_loja/novo_ml ficam de fora.
 CALIBRAVEIS = ("p25", "median", "p75")
+
+# Agrupamento por material, que e o fator dominante de preco. Serve para
+# estimar DERIVA, nao nivel: buckets do mesmo grupo continuam com medianas
+# diferentes entre si. Sem isso os buckets de cauda (alu_rival aparece 0 vezes
+# num run tipico) nunca acumulariam amostra e ficariam congelados para sempre.
+GRUPOS = {
+    "speed": {
+        "alu":     ["alu_105", "alu_ultegra", "alu_rival"],
+        "carbono": ["carbono_105", "carbono_ultegra", "carbono_di2"],
+    },
+    "mtb": {
+        "alu":     ["alu_slx_rockshox", "alu_xt_fox"],
+        "carbono": ["carbono_slx", "carbono_xt_fox", "carbono_xtr_eagle"],
+    },
+}
+
+
+def grupo_de(cat: str, bench_key: str) -> str | None:
+    for nome, chaves in GRUPOS.get(cat, {}).items():
+        if bench_key in chaves:
+            return nome
+    return None
 
 
 def _hoje() -> str:
@@ -124,17 +163,69 @@ def prune_history(history: dict, hoje: str | None = None, window: int = WINDOW_D
     return history
 
 
-def _percentis(precos: list) -> dict | None:
-    """p25/median/p75 de uma amostra. Percentis ja sao robustos a outlier."""
-    if len(precos) < MIN_SAMPLES:
+def dispersao(valores: list) -> float | None:
+    """Razao p75/p25. Acima de MAX_DISPERSAO a amostra nao e homogenea."""
+    if len(valores) < 4:
         return None
+    q = statistics.quantiles(sorted(valores), n=4, method="inclusive")
+    return (q[2] / q[0]) if q[0] else None
+
+
+def _percentis(precos: list, base: dict) -> dict | None:
+    """
+    p25/median/p75 da amostra propria do bucket.
+
+    A mediana calibra a partir de MIN_SAMPLES; os quartis so a partir de
+    MIN_SAMPLES_QUARTIS, porque tem muito mais variancia. Abaixo disso os
+    quartis anteriores sao mantidos em vez de virarem ruido.
+    """
+    n = len(precos)
+    if n < MIN_SAMPLES:
+        return None
+    d = dispersao(precos)
+    if d and d > MAX_DISPERSAO:
+        return {"_disperso": d}
     ordenados = sorted(precos)
-    q = statistics.quantiles(ordenados, n=4, method="inclusive")
-    return {
-        "p25": int(round(q[0])),
-        "median": int(round(statistics.median(ordenados))),
-        "p75": int(round(q[2])),
-    }
+    out = {"median": int(round(statistics.median(ordenados)))}
+    if n >= MIN_SAMPLES_QUARTIS:
+        q = statistics.quantiles(ordenados, n=4, method="inclusive")
+        out["p25"], out["p75"] = int(round(q[0])), int(round(q[2]))
+    else:
+        out["p25"], out["p75"] = base.get("p25"), base.get("p75")
+    return out
+
+
+def _deriva_do_grupo(cat: str, grupo: str, novo: dict, samples: dict) -> tuple[float, int] | None:
+    """
+    Fator de deriva de preco de um grupo de buckets.
+
+    Cada amostra e normalizada pela mediana-base do SEU bucket antes de entrar
+    na conta, e a deriva e a mediana dessas razoes. Com isso:
+
+    - buckets do mesmo grupo mantem medianas diferentes entre si (a deriva e
+      multiplicativa, nao um nivel comum);
+    - a composicao da amostra nao enviesa o resultado — um grupo dominado por
+      bikes baratas nao puxa o fator para baixo, porque cada amostra e medida
+      contra a sua propria referencia.
+    """
+    razoes = []
+    for bench_key in GRUPOS.get(cat, {}).get(grupo, []):
+        ref = novo.get(cat, {}).get(bench_key)
+        if not isinstance(ref, dict):
+            continue
+        base = ref.get("median_base") or ref.get("median")
+        if not base:
+            continue
+        for s in samples.get(f"{cat}:{bench_key}", {}).values():
+            razoes.append(s["p"] / base)
+    if len(razoes) < MIN_SAMPLES_GRUPO:
+        return None
+    d = dispersao(razoes)
+    if d and d > MAX_DISPERSAO:
+        log.info(f"  ! grupo {cat}:{grupo} disperso demais (p75/p25={d:.1f}) — "
+                 f"deriva descartada")
+        return None
+    return statistics.median(razoes), len(razoes)
 
 
 def calcular_confianca(calibrados: int, total: int, updated_at: str | None,
@@ -174,8 +265,24 @@ def recalibrate(benchmarks: dict, history: dict, hoje: str | None = None) -> tup
     novo = json.loads(json.dumps(benchmarks))  # copia profunda
     samples = history.get("samples", {})
 
-    relatorio = {"calibrados": [], "amostra_insuficiente": [], "desconhecidos": []}
+    relatorio = {"calibrados": [], "por_grupo": [], "amostra_insuficiente": [],
+                 "dispersos": [], "desconhecidos": []}
     total_buckets = 0
+
+    # median_base preserva o valor de referencia original de cada bucket. Sem
+    # ele a deriva seria calculada contra a mediana ja calibrada e composta a
+    # cada run, afastando o benchmark do mercado em vez de aproxima-lo.
+    for cat in ("speed", "mtb"):
+        for ref in novo.get(cat, {}).values():
+            if isinstance(ref, dict) and "median_base" not in ref and ref.get("median"):
+                ref["median_base"] = ref["median"]
+
+    derivas = {}
+    for cat in ("speed", "mtb"):
+        for grupo in GRUPOS.get(cat, {}):
+            d = _deriva_do_grupo(cat, grupo, novo, samples)
+            if d:
+                derivas[(cat, grupo)] = d
 
     for cat in ("speed", "mtb"):
         for bench_key, ref in novo.get(cat, {}).items():
@@ -183,24 +290,57 @@ def recalibrate(benchmarks: dict, history: dict, hoje: str | None = None) -> tup
                 continue
             total_buckets += 1
             precos = [s["p"] for s in samples.get(f"{cat}:{bench_key}", {}).values()]
-            calc = _percentis(precos)
-            if calc is None:
-                relatorio["amostra_insuficiente"].append((f"{cat}:{bench_key}", len(precos)))
-                continue
             antes = {k: ref.get(k) for k in CALIBRAVEIS}
-            ref.update(calc)
-            ref["n"] = len(precos)
-            ref["calibrado_em"] = hoje
-            relatorio["calibrados"].append({
-                "bucket": f"{cat}:{bench_key}", "n": len(precos),
-                "antes": antes, "depois": calc,
-            })
+
+            # 1) amostra propria suficiente -> calibra direto
+            calc = _percentis(precos, ref)
+            era_disperso = calc is not None and "_disperso" in calc
+            if era_disperso:
+                relatorio["dispersos"].append(
+                    (f"{cat}:{bench_key}", len(precos), calc["_disperso"]))
+                calc = None
+            if calc is not None:
+                ref.update(calc)
+                ref["n"] = len(precos)
+                ref["calibrado_em"] = hoje
+                ref["origem"] = "direto"
+                relatorio["calibrados"].append({
+                    "bucket": f"{cat}:{bench_key}", "n": len(precos),
+                    "antes": antes, "depois": calc, "origem": "direto",
+                })
+                continue
+
+            # 2) sem amostra propria -> aplica a deriva do grupo sobre a base
+            grupo = grupo_de(cat, bench_key)
+            d = derivas.get((cat, grupo))
+            if d and ref.get("median_base"):
+                fator, n_grupo = d
+                calc = {"median": int(round(ref["median_base"] * fator)),
+                        "p25": ref.get("p25"), "p75": ref.get("p75")}
+                ref.update(calc)
+                ref["n"] = len(precos)
+                ref["calibrado_em"] = hoje
+                ref["origem"] = f"grupo:{grupo}"
+                relatorio["calibrados"].append({
+                    "bucket": f"{cat}:{bench_key}", "n": len(precos),
+                    "antes": antes, "depois": calc,
+                    "origem": f"grupo:{grupo} (n={n_grupo}, x{fator:.2f})",
+                })
+                continue
+
+            # 3) nem amostra propria nem grupo -> mantem o valor anterior
+            #    (quem ja foi reportado como disperso nao repete aqui)
+            if not era_disperso:
+                relatorio["amostra_insuficiente"].append(
+                    (f"{cat}:{bench_key}", len(precos)))
 
     # Buckets observados que nao existem em benchmarks.json — nao inventamos
     # novo_loja para eles, mas registramos para o log.
+    # Limiar proprio, e mais baixo: a funcao deste aviso e sinalizar cedo que
+    # falta um bucket no benchmarks.json, nao calibrar coisa nenhuma.
     conhecidos = {f"{c}:{k}" for c in ("speed", "mtb") for k in novo.get(c, {})}
     for bucket, alvo in samples.items():
-        if bucket not in conhecidos and len(alvo) >= MIN_SAMPLES:
+        if bucket not in conhecidos and len(alvo) >= MIN_SAMPLES_DESCONHECIDO:
             relatorio["desconhecidos"].append((bucket, len(alvo)))
 
     novo["updated_at"] = hoje if relatorio["calibrados"] else benchmarks.get("updated_at")
@@ -221,10 +361,14 @@ def log_relatorio(rel: dict) -> None:
         delta = ""
         if a.get("median"):
             pct = (d["median"] - a["median"]) / a["median"] * 100
-            delta = f" ({pct:+.0f}% vs anterior)"
+            delta = f" ({pct:+.0f}%)"
         log.info(f"  ✓ {c['bucket']:<28} n={c['n']:<4} "
-                 f"median {a.get('median')} → {d['median']}{delta}")
+                 f"median {a.get('median')} → {d['median']}{delta}  [{c['origem']}]")
+    for bucket, n, d in sorted(rel["dispersos"], key=lambda x: -x[2]):
+        log.warning(f"  ⚠ {bucket:<28} n={n} p75/p25={d:.1f} — amostra heterogênea "
+                    f"demais, NÃO calibrado (revisar atribuição de bench_key)")
     for bucket, n in sorted(ins, key=lambda x: -x[1]):
-        log.info(f"  · {bucket:<28} n={n} (precisa de {MIN_SAMPLES}) — mantém valor anterior")
+        log.info(f"  · {bucket:<28} n={n} (precisa de {MIN_SAMPLES} próprias "
+                 f"ou {MIN_SAMPLES_GRUPO} no grupo) — mantém valor anterior")
     for bucket, n in rel["desconhecidos"]:
         log.info(f"  ! {bucket:<28} n={n} — observado mas ausente de benchmarks.json")
