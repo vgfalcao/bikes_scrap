@@ -43,6 +43,20 @@
       "p75": 7500,
       "novo_loja": 13000,
       "novo_ml": 11000
+    },
+    "alu_generico": {
+      "p25": 3800,
+      "median": 5200,
+      "p75": 6400,
+      "novo_loja": 11900,
+      "novo_ml": 9800
+    },
+    "carbono_generico": {
+      "p25": 6800,
+      "median": 9000,
+      "p75": 11500,
+      "novo_loja": 18500,
+      "novo_ml": 15500
     }
   },
   "mtb": {
@@ -80,6 +94,20 @@
       "p75": 24000,
       "novo_loja": 40000,
       "novo_ml": 34000
+    },
+    "alu_generico": {
+      "p25": 4800,
+      "median": 6800,
+      "p75": 8500,
+      "novo_loja": 14000,
+      "novo_ml": 12000
+    },
+    "carbono_generico": {
+      "p25": 7000,
+      "median": 10000,
+      "p75": 13000,
+      "novo_loja": 20000,
+      "novo_ml": 17000
     }
   },
   "tiers": {

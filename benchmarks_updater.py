@@ -61,12 +61,14 @@ CALIBRAVEIS = ("p25", "median", "p75")
 # num run tipico) nunca acumulariam amostra e ficariam congelados para sempre.
 GRUPOS = {
     "speed": {
-        "alu":     ["alu_105", "alu_ultegra", "alu_rival"],
-        "carbono": ["carbono_105", "carbono_ultegra", "carbono_di2"],
+        "alu":     ["alu_105", "alu_ultegra", "alu_rival", "alu_generico"],
+        "carbono": ["carbono_105", "carbono_ultegra", "carbono_di2",
+                    "carbono_generico"],
     },
     "mtb": {
-        "alu":     ["alu_slx_rockshox", "alu_xt_fox"],
-        "carbono": ["carbono_slx", "carbono_xt_fox", "carbono_xtr_eagle"],
+        "alu":     ["alu_slx_rockshox", "alu_xt_fox", "alu_generico"],
+        "carbono": ["carbono_slx", "carbono_xt_fox", "carbono_xtr_eagle",
+                    "carbono_generico"],
     },
 }
 

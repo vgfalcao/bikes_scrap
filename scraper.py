@@ -52,6 +52,8 @@ BENCHMARKS_DEFAULT = {
         "carbono_105":       {"p25": 6800,  "median": 9000,  "p75": 11500, "novo_loja": 18500, "novo_ml": 15500},
         "carbono_ultegra":   {"p25": 9500,  "median": 13000, "p75": 16000, "novo_loja": 26000, "novo_ml": 22000},
         "carbono_di2":       {"p25": 14000, "median": 19000, "p75": 25000, "novo_loja": 42000, "novo_ml": 36000},
+        "alu_generico":      {"p25": 3800,  "median": 5200,  "p75": 6400,  "novo_loja": 11900, "novo_ml": 9800},
+        "carbono_generico":  {"p25": 6800,  "median": 9000,  "p75": 11500, "novo_loja": 18500, "novo_ml": 15500},
     },
     "mtb": {
         "alu_slx_rockshox":  {"p25": 4800,  "median": 6800,  "p75": 8500,  "novo_loja": 14000, "novo_ml": 12000},
@@ -59,6 +61,8 @@ BENCHMARKS_DEFAULT = {
         "carbono_slx":       {"p25": 7000,  "median": 10000, "p75": 13000, "novo_loja": 20000, "novo_ml": 17000},
         "carbono_xt_fox":    {"p25": 9000,  "median": 12000, "p75": 15000, "novo_loja": 28000, "novo_ml": 24000},
         "carbono_xtr_eagle": {"p25": 13000, "median": 18000, "p75": 24000, "novo_loja": 40000, "novo_ml": 34000},
+        "alu_generico":      {"p25": 4800,  "median": 6800,  "p75": 8500,  "novo_loja": 14000, "novo_ml": 12000},
+        "carbono_generico":  {"p25": 7000,  "median": 10000, "p75": 13000, "novo_loja": 20000, "novo_ml": 17000},
     },
     # Tier A = importadas premium, Tier B = nacionais premium, Tier C = nacionais intermediárias
     "tiers": {
@@ -446,12 +450,23 @@ def detect_brand(text: str, category: str) -> str | None:
             return brand
     return None
 
+def _grupo_match(termo: str, texto: str) -> bool:
+    """
+    Casa um nome de grupo como palavra inteira.
+
+    O `termo in texto` anterior casava siglas curtas dentro de outras palavras:
+    "xtr" em "e-xtr-a", "xt" em "se-xt-a", "nx" em "li-nx". Foi assim que um
+    Audax ADX 200 de estrada, com "peças extra" no anúncio, ganhou grupo XTR,
+    caiu no bucket mais caro do MTB e apareceu no e-mail com VP 100 e -87%.
+    """
+    return re.search(r"(?<![a-z0-9])" + re.escape(termo) + r"(?![a-z0-9])", texto) is not None
+
 def detect_grupo_speed(text: str) -> str | None:
     t = norm(text)
     for g in ["dura-ace di2","ultegra di2","105 di2","sram red etap","sram force etap",
               "sram rival etap","dura-ace","ultegra r8100","ultegra r8000","ultegra",
               "105 r7100","105 r7000","105 5800","105","sram force","sram rival","sram red"]:
-        if g in t:
+        if _grupo_match(g, t):
             return g
     return None
 
@@ -460,7 +475,7 @@ def detect_grupo_mtb(text: str) -> str | None:
     for g in ["xtr m9100","xtr","xx1 axs","xx1 eagle","xx1","x01 axs","x01 eagle","x01",
               "gx axs","gx eagle","gx","nx eagle","nx","xt m8100","xt m8000","xt",
               "slx m7100","slx","deore m6100","deore"]:
-        if g in t:
+        if _grupo_match(g, t):
             return g
     return None
 
@@ -562,18 +577,24 @@ def score_speed(attrs: dict, benchmarks: dict) -> tuple[int, dict]:
     preco  = attrs.get("price_int")
     grupo  = attrs.get("grupo", "")
     mat    = attrs.get("material", "aluminio")
-    bench_key = "alu_105"
-    if "di2" in norm(grupo) or "etap" in norm(grupo):
-        bench_key = "carbono_di2" if "carbono" in mat else "alu_ultegra"
-    elif any(k in norm(grupo) for k in ["ultegra","force","red"]):
-        bench_key = "carbono_ultegra" if "carbono" in mat else "alu_ultegra"
-    elif any(k in norm(grupo) for k in ["rival"]):
-        bench_key = "carbono_105" if "carbono" in mat else "alu_rival"
-    elif "carbono" in mat:
-        bench_key = "carbono_105"
+    # Mesma correcao aplicada ao MTB: "alu_105" era o valor inicial e absorvia
+    # todo grupo nao reconhecido, dando a esses anuncios a mediana de um 105.
+    g_s     = norm(grupo)
+    carbono = "carbono" in mat
+    if any(_grupo_match(k, g_s) for k in ["di2", "etap"]):
+        bench_key = "carbono_di2" if carbono else "alu_ultegra"
+    elif any(_grupo_match(k, g_s) for k in ["ultegra", "dura-ace", "force", "red"]):
+        bench_key = "carbono_ultegra" if carbono else "alu_ultegra"
+    elif any(_grupo_match(k, g_s) for k in ["rival"]):
+        bench_key = "carbono_105" if carbono else "alu_rival"
+    elif any(_grupo_match(k, g_s) for k in ["105", "r7000", "r7100", "5800"]):
+        bench_key = "carbono_105" if carbono else "alu_105"
+    else:
+        bench_key = "carbono_generico" if carbono else "alu_generico"
+        attrs["grupo_nao_confirmado"] = True
 
     cat_bench = benchmarks.get("speed", BENCHMARKS_DEFAULT["speed"])
-    ref = cat_bench.get(bench_key, cat_bench["alu_105"])
+    ref = cat_bench.get(bench_key, cat_bench["alu_generico"])
     median = ref["median"]
     attrs["bench_key"] = bench_key
     attrs["bench_median"] = median
@@ -641,16 +662,37 @@ def score_mtb(attrs: dict, benchmarks: dict) -> tuple[int, dict]:
     susp   = attrs.get("suspensao") or ""
     g = norm(grupo)
 
-    bench_key = "alu_slx_rockshox"
-    if any(k in g for k in ["xtr","xx1","x01"]):
-        bench_key = "carbono_xtr_eagle"
-    elif any(k in g for k in ["xt","gx eagle"]):
-        bench_key = "carbono_xt_fox" if "carbono" in mat else "alu_xt_fox"
-    elif any(k in g for k in ["slx","nx eagle","gx"]):
-        bench_key = "carbono_slx" if "carbono" in mat else "alu_slx_rockshox"
+    # bench_key por nivel de grupo × material.
+    #
+    # Antes "alu_slx_rockshox" era o valor inicial e sobrevivia a qualquer grupo
+    # nao reconhecido — virou o balde onde caiu tudo (grupo vazio, "shimano",
+    # "deore", NX de entrada), com anuncios de R$1.550 a R$24.000 no mesmo
+    # bucket. Isso inviabilizou a calibracao (p75/p25 = 3,9) e distorceu o score
+    # de todo anuncio sem grupo identificado. Agora:
+    #   - grupo nao reconhecido cai num bucket generico do proprio material,
+    #     em vez de herdar a mediana de um grupo intermediario;
+    #   - o material e respeitado em TODOS os ramos, inclusive XTR (antes um
+    #     quadro de aluminio com XTR recebia a mediana de carbono, 18.000);
+    #   - NX (entrada) deixa de dividir bucket com SLX (intermediario) — o
+    #     proprio score ja os separava em 10 e 15 pontos;
+    #   - "gx" e "gx eagle" passam a cair no mesmo lugar (antes iam para
+    #     buckets diferentes conforme a grafia do vendedor).
+    carbono = "carbono" in mat
+    if any(_grupo_match(k, g) for k in ["xtr", "xx1", "x01"]):
+        bench_key = "carbono_xtr_eagle" if carbono else "alu_xt_fox"
+    elif any(_grupo_match(k, g) for k in ["xt", "gx", "gx eagle", "gx axs"]):
+        bench_key = "carbono_xt_fox" if carbono else "alu_xt_fox"
+    elif any(_grupo_match(k, g) for k in ["slx"]):
+        bench_key = "carbono_slx" if carbono else "alu_slx_rockshox"
+    elif any(_grupo_match(k, g) for k in ["nx", "nx eagle", "deore"]):
+        bench_key = "carbono_generico" if carbono else "alu_generico"
+    else:
+        # Grupo ausente ou nao reconhecido: nao herda mediana de grupo nenhum.
+        bench_key = "carbono_generico" if carbono else "alu_generico"
+        attrs["grupo_nao_confirmado"] = True
 
     cat_bench = benchmarks.get("mtb", BENCHMARKS_DEFAULT["mtb"])
-    ref = cat_bench.get(bench_key, cat_bench["alu_slx_rockshox"])
+    ref = cat_bench.get(bench_key, cat_bench["alu_generico"])
     median = ref["median"]
     attrs["bench_key"] = bench_key
     attrs["bench_median"] = median
