@@ -94,62 +94,108 @@ def norm(s: str) -> str:
 # MATCHING TÍTULO × DATABASE
 # ──────────────────────────────────────────────────────────────
 
-def find_match(title: str, desc: str, db: dict) -> tuple[dict | None, str | None]:
+CODIGO_MAX_LEN = 4
+
+def _codigos(s: str) -> set:
     """
-    Tenta encontrar um modelo no database que corresponda ao título.
+    Tokens que identificam a versao do modelo, e que o fuzzy nao pode alterar.
+
+    Sao os curtos (ate CODIGO_MAX_LEN) e os que contem digito: "sl", "slr",
+    "sl6", "caad13", "9.7". Tokens longos sao nome de modelo ("stumpjumper",
+    "synapse") e continuam sujeitos ao fuzzy, que existe para tolerar typo.
+
+    A distincao nao pode ser so digito: "emonda sl" x "emonda slr" da 0.947 de
+    similaridade, nao tem digito nenhum, e sao faixas de preco diferentes.
+    """
+    return {t for t in s.split() if len(t) <= CODIGO_MAX_LEN or any(c.isdigit() for c in t)}
+
+
+def _alias_no_texto(alias: str, texto: str) -> bool:
+    """Alias presente como palavra inteira, nao como pedaco de outra."""
+    return re.search(r"(?<![a-z0-9])" + re.escape(alias) + r"(?![a-z0-9])", texto) is not None
+
+
+def find_match(title: str, desc: str, db: dict,
+               category: str | None = None) -> tuple[dict | None, str | None]:
+    """
+    Encontra no database o modelo correspondente ao anuncio.
     Retorna (modelo_dict, model_key) ou (None, None).
 
-    Estratégia em 3 etapas:
-    1. Match exato de alias normalizado
-    2. Match parcial (alias contido no título)
-    3. Match fuzzy (similaridade > 0.82) — captura typos como "stumjumper"
+    1. Match direto de alias, como palavra inteira
+    2. Match fuzzy, proibido de atravessar digitos
+
+    `category` ('speed' | 'mtb') restringe o pool. Sem isso o pool juntava as
+    duas categorias e nada filtrava depois: "Bicicleta MTB Trek Emonda" casava
+    com trek_emonda_s, um modelo de estrada, e o anuncio herdava specs de road.
     """
     text = norm(title + " " + desc)
-    all_models = {**db.get("speed", {}), **db.get("mtb", {})}
 
-    # Etapa 1 & 2: busca direta de aliases
-    best_match = None
-    best_key   = None
-    best_len   = 0  # preferir alias mais longo (mais específico)
+    if category in ("speed", "mtb"):
+        all_models = dict(db.get(category, {}))
+    else:
+        # Sem categoria conhecida, ainda assim evita que uma chave repetida em
+        # mtb sobrescreva silenciosamente a de speed.
+        all_models = {}
+        for cat in ("speed", "mtb"):
+            for k, v in db.get(cat, {}).items():
+                all_models.setdefault(f"{cat}:{k}", v)
 
+    # Etapa 1: alias como palavra inteira, preferindo o mais longo (especifico)
+    best_match = best_key = None
+    best_len = 0
     for model_key, model in all_models.items():
         for alias in model.get("aliases", []):
             a = norm(alias)
-            if a in text and len(a) > best_len:
-                best_match = model
-                best_key   = model_key
-                best_len   = len(a)
+            if len(a) > best_len and _alias_no_texto(a, text):
+                best_match, best_key, best_len = model, model_key, len(a)
 
     if best_match:
-        return best_match, best_key
+        return best_match, best_key.split(":")[-1] if ":" in str(best_key) else best_key
 
-    # Etapa 3: fuzzy matching nos aliases
-    all_aliases = []
-    for model_key, model in all_models.items():
-        for alias in model.get("aliases", []):
-            all_aliases.append((norm(alias), model_key, model))
+    # Etapa 2: fuzzy, para typo de grafia — nunca para versao de modelo.
+    #
+    # O cutoff 0.82 nao distingue versao: "cannondale caad4" x "cannondal
+    # caad13" da 0.875, "caad10" x "caad13" da 0.833, "tarmac sl6" x "tarmac
+    # sl7" da 0.900, "emonda sl" x "emonda slr" da 0.947. Foi assim que um
+    # CAAD4 do ano 2000 casou com o CAAD13 e recebeu grupo 105 R7100. Exigir
+    # os tokens de codigo identicos preserva o proposito original
+    # ("stumjumper" -> "stumpjumper") sem trocar um modelo por outro.
+    all_aliases = [(norm(alias), model_key, model)
+                   for model_key, model in all_models.items()
+                   for alias in model.get("aliases", [])]
 
-    # Divide o título em janelas de 2-4 palavras para matching fuzzy
     words = text.split()
     for window_size in [4, 3, 2]:
         for i in range(len(words) - window_size + 1):
             window = " ".join(words[i:i+window_size])
             if len(window) < 6:
                 continue
-            matches = difflib.get_close_matches(window, [a[0] for a in all_aliases], n=1, cutoff=0.82)
+            cod_win = _codigos(window)
+            candidatos = [a for a, _, _ in all_aliases if _codigos(a) == cod_win]
+            if not candidatos:
+                continue
+            matches = difflib.get_close_matches(window, candidatos, n=1, cutoff=0.82)
             if matches:
-                matched_alias = matches[0]
                 for alias_norm, model_key, model in all_aliases:
-                    if alias_norm == matched_alias:
-                        return model, model_key
+                    if alias_norm == matches[0]:
+                        k = str(model_key)
+                        return model, k.split(":")[-1] if ":" in k else k
 
     return None, None
 
 
+MAX_DIST_ANO = 3
+
 def get_year_data(model: dict, year: int | None) -> tuple[dict, int]:
     """
-    Retorna (ano_data, ano_usado).
-    Se ano=None ou não encontrado → usa último ano mapeado.
+    Retorna (ano_data, ano_usado), ou ({}, 0) quando nao ha ano proximo o
+    bastante para confiar nas specs.
+
+    Antes a funcao caia sempre no ultimo ano mapeado, sem limite de distancia:
+    um anuncio de 2000 recebia as specs de 2024. Combinado com um match errado,
+    foi assim que um CAAD4 do ano 2000 ganhou grupo 105 R7100, lancado em 2022.
+    Agora a distancia maxima e MAX_DIST_ANO, e fora dela o anuncio fica sem
+    specs de fabrica em vez de receber as do modelo atual.
     """
     anos = model.get("anos", {})
     if not anos:
@@ -161,14 +207,17 @@ def get_year_data(model: dict, year: int | None) -> tuple[dict, int]:
     if year and year in anos_int:
         return anos_int[year], year
 
-    # Ano não mapeado exato: usa o mais próximo anterior
     if year:
-        anteriores = [y for y in sorted_years if y <= year]
-        if anteriores:
-            y = max(anteriores)
-            return anos_int[y], y
+        # Ano nao mapeado: o mapeado mais proximo, em qualquer direcao, desde
+        # que dentro da janela. Um anuncio de 2025 de um modelo mapeado ate
+        # 2024 e legitimo; um de 2000 nao e.
+        mais_proximo = min(sorted_years, key=lambda y: abs(y - year))
+        if abs(mais_proximo - year) <= MAX_DIST_ANO:
+            return anos_int[mais_proximo], mais_proximo
+        return {}, 0
 
-    # Sem ano: usa último mapeado
+    # Sem ano no anuncio: usa o ultimo mapeado, mas isso e um palpite — quem
+    # chama marca o resultado como nao confirmado.
     last = sorted_years[-1]
     return anos_int[last], last
 
@@ -194,24 +243,27 @@ def enrich_from_db(title: str, desc: str, attrs: dict, db: dict) -> dict:
       - peso_db (float)
       - suspensao_db (str) — MTB
     """
-    model, model_key = find_match(title, desc, db)
+    model, model_key = find_match(title, desc, db, attrs.get("category"))
+
+    def _sem_specs(attrs: dict) -> dict:
+        """Sem match utilizavel: o titulo e a unica fonte de grupo."""
+        attrs["db_match"]             = False
+        attrs["grupo_source"]         = "titulo" if attrs.get("grupo") else "nenhum"
+        attrs["grupo_nao_confirmado"] = not attrs.get("grupo")
+        return attrs
 
     if not model:
-        # Sem match no database
-        grupo_titulo = attrs.get("grupo")
-        if not grupo_titulo:
-            attrs["db_match"]              = False
-            attrs["grupo_nao_confirmado"]  = True
-            attrs["grupo_source"]          = "nenhum"
-        else:
-            attrs["db_match"]              = False
-            attrs["grupo_nao_confirmado"]  = False
-            attrs["grupo_source"]          = "titulo"
-        return attrs
+        return _sem_specs(attrs)
 
     # Match encontrado
     year     = attrs.get("year")
     ano_data, ano_usado = get_year_data(model, year)
+
+    # Ano do anuncio longe demais de qualquer ano mapeado: melhor nao ter
+    # specs do que herdar as de outra geracao do modelo.
+    if not ano_data:
+        return _sem_specs(attrs)
+
     category = model.get("categoria", attrs.get("category", "speed"))
 
     grupo_oem    = ano_data.get("grupo_oem", "")
