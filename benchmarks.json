@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-30",
+  "updated_at": "2026-11-03",
   "confidence": "high",
   "speed": {
     "alu_105": {
@@ -10,40 +10,40 @@
       "novo_ml": 9800,
       "median_base": 5200,
       "n": 7,
-      "calibrado_em": "2026-10-30",
+      "calibrado_em": "2026-11-03",
       "origem": "grupo:alu"
     },
     "carbono_105": {
-      "p25": 8700,
-      "median": 15500,
-      "p75": 17490,
+      "p25": 9025,
+      "median": 15200,
+      "p75": 17368,
       "novo_loja": 18500,
       "novo_ml": 15500,
       "median_base": 9000,
-      "n": 25,
-      "calibrado_em": "2026-10-30",
+      "n": 26,
+      "calibrado_em": "2026-11-03",
       "origem": "direto"
     },
     "carbono_ultegra": {
       "p25": 9500,
-      "median": 11850,
+      "median": 11800,
       "p75": 16000,
       "novo_loja": 26000,
       "novo_ml": 22000,
       "median_base": 13000,
-      "n": 14,
-      "calibrado_em": "2026-10-30",
+      "n": 15,
+      "calibrado_em": "2026-11-03",
       "origem": "direto"
     },
     "carbono_di2": {
       "p25": 14000,
-      "median": 21152,
+      "median": 21111,
       "p75": 25000,
       "novo_loja": 42000,
       "novo_ml": 36000,
       "median_base": 19000,
       "n": 6,
-      "calibrado_em": "2026-10-30",
+      "calibrado_em": "2026-11-03",
       "origem": "grupo:carbono"
     },
     "alu_ultegra": {
@@ -54,7 +54,7 @@
       "novo_ml": 13500,
       "median_base": 7500,
       "n": 3,
-      "calibrado_em": "2026-10-30",
+      "calibrado_em": "2026-11-03",
       "origem": "grupo:alu"
     },
     "alu_rival": {
@@ -65,7 +65,7 @@
       "novo_ml": 11000,
       "median_base": 6000,
       "n": 0,
-      "calibrado_em": "2026-10-30",
+      "calibrado_em": "2026-11-03",
       "origem": "grupo:alu"
     },
     "alu_generico": {
@@ -76,42 +76,42 @@
       "novo_ml": 9800,
       "median_base": 5200,
       "n": 15,
-      "calibrado_em": "2026-10-30",
+      "calibrado_em": "2026-11-03",
       "origem": "direto"
     },
     "carbono_generico": {
       "p25": 6800,
-      "median": 10019,
+      "median": 10000,
       "p75": 11500,
       "novo_loja": 18500,
       "novo_ml": 15500,
       "median_base": 9000,
-      "n": 7,
-      "calibrado_em": "2026-10-30",
+      "n": 8,
+      "calibrado_em": "2026-11-03",
       "origem": "grupo:carbono"
     }
   },
   "mtb": {
     "alu_slx_rockshox": {
       "p25": 4800,
-      "median": 3751,
+      "median": 3450,
       "p75": 8500,
       "novo_loja": 14000,
       "novo_ml": 12000,
       "median_base": 6800,
       "n": 1,
-      "calibrado_em": "2026-10-30",
+      "calibrado_em": "2026-11-03",
       "origem": "grupo:alu"
     },
     "alu_xt_fox": {
       "p25": 6500,
-      "median": 4965,
+      "median": 4566,
       "p75": 11000,
       "novo_loja": 18000,
       "novo_ml": 15000,
       "median_base": 9000,
-      "n": 10,
-      "calibrado_em": "2026-10-30",
+      "n": 11,
+      "calibrado_em": "2026-11-03",
       "origem": "grupo:alu"
     },
     "carbono_slx": {
@@ -122,7 +122,7 @@
       "novo_ml": 17000,
       "median_base": 10000,
       "n": 2,
-      "calibrado_em": "2026-10-30",
+      "calibrado_em": "2026-11-03",
       "origem": "grupo:carbono"
     },
     "carbono_xt_fox": {
@@ -133,40 +133,40 @@
       "novo_ml": 24000,
       "median_base": 12000,
       "n": 15,
-      "calibrado_em": "2026-10-30",
+      "calibrado_em": "2026-11-03",
       "origem": "direto"
     },
     "carbono_xtr_eagle": {
       "p25": 13000,
-      "median": 17999,
+      "median": 18000,
       "p75": 24000,
       "novo_loja": 40000,
       "novo_ml": 34000,
       "median_base": 18000,
       "n": 8,
-      "calibrado_em": "2026-10-30",
+      "calibrado_em": "2026-11-03",
       "origem": "grupo:carbono"
     },
     "alu_generico": {
       "p25": 2300,
-      "median": 3800,
+      "median": 3450,
       "p75": 6399,
       "novo_loja": 14000,
       "novo_ml": 12000,
       "median_base": 6800,
-      "n": 41,
-      "calibrado_em": "2026-10-30",
-      "origem": "direto"
+      "n": 44,
+      "calibrado_em": "2026-11-03",
+      "origem": "grupo:alu"
     },
     "carbono_generico": {
       "p25": 7000,
-      "median": 11990,
+      "median": 12245,
       "p75": 13000,
       "novo_loja": 20000,
       "novo_ml": 17000,
       "median_base": 10000,
-      "n": 13,
-      "calibrado_em": "2026-10-30",
+      "n": 16,
+      "calibrado_em": "2026-11-03",
       "origem": "direto"
     }
   },
