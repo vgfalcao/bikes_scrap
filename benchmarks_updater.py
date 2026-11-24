@@ -51,6 +51,18 @@ PRICE_CEIL = 80000
 # A causa esta na atribuicao de bench_key, nao aqui; esta trava so impede que
 # o problema se propague para o score.
 MAX_DISPERSAO = 3.0
+# Histerese: uma vez reprovado, o bucket precisa descer ate aqui para voltar a
+# ser aceito. Sem isso ele oscila em torno do limite — mtb:alu_generico deu 3,1
+# numa run e 2,83 na seguinte, ligando e desligando a trava e, com ela, a
+# deriva de todo o grupo aluminio.
+MAX_DISPERSAO_RETORNO = 2.5
+
+# A deriva de grupo nao pode contradizer a evidencia propria do bucket. Um
+# bucket SEM amostra depende dela inteiramente (speed:alu_rival tem n=0), mas
+# com amostra propria, ainda que pouca, uma deriva que diverge demais da
+# mediana observada e artefato: mtb:alu_entrada, com dois anuncios de R$6.799 e
+# R$9.900, recebeu mediana 1.956 de uma deriva x0,47.
+MAX_CONTRADICAO = 0.5
 
 # Chaves que a calibracao pode reescrever. novo_loja/novo_ml ficam de fora.
 CALIBRAVEIS = ("p25", "median", "p75")
@@ -218,6 +230,14 @@ def dispersao(valores: list) -> float | None:
     return (q[2] / q[0]) if q[0] else None
 
 
+def limite_dispersao(ref: dict) -> float:
+    """
+    Limite de dispersao aplicavel ao bucket, com histerese: quem ja foi
+    reprovado precisa descer ate MAX_DISPERSAO_RETORNO para voltar.
+    """
+    return MAX_DISPERSAO_RETORNO if ref.get("disperso") else MAX_DISPERSAO
+
+
 def _percentis(precos: list, base: dict) -> dict | None:
     """
     p25/median/p75 da amostra propria do bucket.
@@ -230,7 +250,7 @@ def _percentis(precos: list, base: dict) -> dict | None:
     if n < MIN_SAMPLES:
         return None
     d = dispersao(precos)
-    if d and d > MAX_DISPERSAO:
+    if d and d > limite_dispersao(base):
         return {"_disperso": d}
     ordenados = sorted(precos)
     out = {"median": int(round(statistics.median(ordenados)))}
@@ -274,7 +294,7 @@ def _deriva_do_grupo(cat: str, grupo: str, novo: dict, samples: dict) -> tuple[f
             continue
         precos = [s["p"] for s in samples.get(f"{cat}:{bench_key}", {}).values()]
         d_bucket = dispersao(precos)
-        if d_bucket and d_bucket > MAX_DISPERSAO:
+        if d_bucket and d_bucket > limite_dispersao(ref):
             excluidos.append((f"{cat}:{bench_key}", len(precos), d_bucket))
             continue
         razoes.extend(p / base for p in precos)
@@ -331,7 +351,7 @@ def recalibrate(benchmarks: dict, history: dict, hoje: str | None = None) -> tup
     samples = history.get("samples", {})
 
     relatorio = {"calibrados": [], "por_grupo": [], "amostra_insuficiente": [],
-                 "dispersos": [], "desconhecidos": []}
+                 "dispersos": [], "contraditos": [], "desconhecidos": []}
     total_buckets = 0
 
     # median_base preserva o valor de referencia original de cada bucket. Sem
@@ -362,8 +382,12 @@ def recalibrate(benchmarks: dict, history: dict, hoje: str | None = None) -> tup
             era_disperso = calc is not None and "_disperso" in calc
             if era_disperso:
                 relatorio["dispersos"].append(
-                    (f"{cat}:{bench_key}", len(precos), calc["_disperso"]))
+                    (f"{cat}:{bench_key}", len(precos), calc["_disperso"],
+                     limite_dispersao(ref)))
                 calc = None
+            # Estado persistido: alimenta a histerese da proxima run.
+            if len(precos) >= MIN_SAMPLES:
+                ref["disperso"] = era_disperso
             if calc is not None:
                 ref.update(calc)
                 ref["n"] = len(precos)
@@ -380,7 +404,40 @@ def recalibrate(benchmarks: dict, history: dict, hoje: str | None = None) -> tup
             d = derivas.get((cat, grupo))
             if d and ref.get("median_base"):
                 fator, n_grupo = d
-                calc = {"median": int(round(ref["median_base"] * fator)),
+                proposta = int(round(ref["median_base"] * fator))
+
+                # A deriva nao pode contradizer a evidencia propria do bucket.
+                # Sem amostra nenhuma ela e a unica informacao disponivel e
+                # passa direto; com amostra, ainda que pouca, uma divergencia
+                # grande denuncia artefato.
+                #
+                # Amostra dispersa nao conta como evidencia: se ela nao serve
+                # para calibrar, tambem nao serve para contradizer uma deriva
+                # vinda de buckets confiaveis. O criterio e o mesmo que exclui
+                # o bucket do calculo da deriva, e nao depende de ter atingido
+                # MIN_SAMPLES — um bucket com n=9 e p75/p25=3,5 e excluido la
+                # e precisa ser ignorado aqui tambem.
+                d_propria = dispersao(precos)
+                confiavel = not (d_propria and d_propria > limite_dispersao(ref))
+                if precos and confiavel:
+                    propria = statistics.median(precos)
+                    if propria and abs(proposta / propria - 1) > MAX_CONTRADICAO:
+                        relatorio["contraditos"].append(
+                            (f"{cat}:{bench_key}", len(precos), int(propria),
+                             proposta, fator))
+                        relatorio["amostra_insuficiente"].append(
+                            (f"{cat}:{bench_key}", len(precos)))
+                        # Descartar a deriva nao basta: o valor atual pode ser
+                        # uma deriva anterior igualmente ruim, ja gravada. Sem
+                        # calibracao confiavel o estado honesto e a base.
+                        if ref.get("origem", "").startswith("grupo:") and ref.get("median_base"):
+                            ref["median"] = ref["median_base"]
+                            ref.pop("origem", None)
+                            ref.pop("calibrado_em", None)
+                            ref.pop("n", None)
+                        continue
+
+                calc = {"median": proposta,
                         "p25": ref.get("p25"), "p75": ref.get("p75")}
                 ref.update(calc)
                 ref["n"] = len(precos)
@@ -429,13 +486,17 @@ def log_relatorio(rel: dict) -> None:
             delta = f" ({pct:+.0f}%)"
         log.info(f"  ✓ {c['bucket']:<28} n={c['n']:<4} "
                  f"median {a.get('median')} → {d['median']}{delta}  [{c['origem']}]")
-    for bucket, n, d in sorted(rel["dispersos"], key=lambda x: -x[2]):
+    for bucket, n, d, lim in sorted(rel["dispersos"], key=lambda x: -x[2]):
         calibrado = next((c for c in cal if c["bucket"] == bucket), None)
         destino = (f"usou a deriva de {calibrado['origem'].split('(')[0].strip()}"
                    if calibrado else "mantém valor anterior")
-        log.warning(f"  ⚠ {bucket:<28} n={n} p75/p25={d:.1f} — amostra heterogênea, "
-                    f"fora da calibração direta e da deriva de grupo; {destino} "
-                    f"(revisar atribuição de bench_key)")
+        log.warning(f"  ⚠ {bucket:<28} n={n} p75/p25={d:.1f} (limite {lim:.1f}) — "
+                    f"amostra heterogênea, fora da calibração direta e da deriva "
+                    f"de grupo; {destino} (revisar atribuição de bench_key)")
+    for bucket, n, propria, proposta, fator in rel["contraditos"]:
+        log.warning(f"  ⚠ {bucket:<28} n={n} — deriva x{fator:.2f} propunha "
+                    f"{proposta} contra mediana própria {propria}; divergência "
+                    f"acima de {MAX_CONTRADICAO:.0%}, deriva descartada")
     for bucket, n in sorted(ins, key=lambda x: -x[1]):
         log.info(f"  · {bucket:<28} n={n} (precisa de {MIN_SAMPLES} próprias "
                  f"ou {MIN_SAMPLES_GRUPO} no grupo) — mantém valor anterior")
