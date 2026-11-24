@@ -437,8 +437,14 @@ def recalibrate(benchmarks: dict, history: dict, hoje: str | None = None) -> tup
                             ref.pop("n", None)
                         continue
 
+                # Os quartis acompanham a mediana pelo mesmo fator. Sem isso a
+                # deriva movia so a mediana e a deixava fora do proprio
+                # intervalo: em producao 9 dos 17 buckets acabaram com p75
+                # ABAIXO da mediana (speed:alu_105 em 3800/7700/6400).
+                escala = proposta / ref["median"] if ref.get("median") else 1.0
                 calc = {"median": proposta,
-                        "p25": ref.get("p25"), "p75": ref.get("p75")}
+                        "p25": int(round(ref["p25"] * escala)) if ref.get("p25") else ref.get("p25"),
+                        "p75": int(round(ref["p75"] * escala)) if ref.get("p75") else ref.get("p75")}
                 ref.update(calc)
                 ref["n"] = len(precos)
                 ref["calibrado_em"] = hoje
