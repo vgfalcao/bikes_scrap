@@ -266,7 +266,13 @@ def enrich_from_db(title: str, desc: str, attrs: dict, db: dict) -> dict:
 
     category = model.get("categoria", attrs.get("category", "speed"))
 
-    grupo_oem    = ano_data.get("grupo_oem", "")
+    # Sem ano no anuncio, o ano usado e um palpite: get_year_data devolve o
+    # ultimo mapeado. Isso serve para material e peso, que mudam pouco entre
+    # geracoes, mas NAO para o grupo — que muda a cada geracao e decide o
+    # bucket de comparacao. Atribuir o grupo do modelo atual a uma bike de
+    # ano desconhecido a empurra sistematicamente para cima.
+    ano_incerto = not attrs.get("year")
+    grupo_oem    = "" if ano_incerto else ano_data.get("grupo_oem", "")
     grupo_titulo = attrs.get("grupo")
 
     grupo_final, grupo_source = resolve_grupo(grupo_titulo, grupo_oem, category)
@@ -313,8 +319,12 @@ def enrich_from_db(title: str, desc: str, attrs: dict, db: dict) -> dict:
     attrs["db_year_used"]         = ano_usado
     attrs["db_grupo_oem"]         = grupo_oem
     attrs["grupo"]                = grupo_final
-    attrs["grupo_source"]         = grupo_source
-    attrs["grupo_nao_confirmado"] = False
+    # Com grupo vazio, resolve_grupo devolve fonte "database" mesmo sem o
+    # banco ter fornecido nada — acontece quando o ano e desconhecido e o
+    # grupo_oem foi suprimido. Nesse caso a fonte honesta e "nenhum" e o
+    # grupo fica marcado como nao confirmado.
+    attrs["grupo_source"]         = grupo_source if grupo_final else "nenhum"
+    attrs["grupo_nao_confirmado"] = not grupo_final
     attrs["tier"]                 = model.get("tier", "C")  # tier da marca via database
     if not attrs.get("brand"):  # propaga marca do DB se não detectada no título
         attrs["brand"] = model.get("marca")

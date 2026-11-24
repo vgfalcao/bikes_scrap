@@ -326,7 +326,21 @@ def text_contains_any(text: str, keywords: list) -> bool:
     return any(k in t for k in keywords)
 
 def extract_year(text: str) -> int | None:
-    m = re.search(r"\b(201[5-9]|202[0-9])\b", text)
+    """
+    Ano do modelo. Cobre de 1990 a 2029.
+
+    A faixa anterior era 2015-2029, entao toda bike de 2014 ou mais antiga
+    saia com year=None — e isso tinha dois efeitos silenciosos:
+
+    1. get_year_data(None) devolvia as specs do ANO MAIS RECENTE mapeado do
+       modelo. Um Giant TCR Advanced SL 2014 recebia grupo "105 r7100", de
+       2022, e ia parar no bucket carbono_105. Era a principal causa da
+       inversao em que a mediana de carbono/105 (14.900) superava a de
+       carbono/Ultegra (12.745).
+    2. Os filtros FILTROS_SPEED["ano_min_alu"]=2015 e ["ano_min_carb"]=2010
+       nunca rejeitaram nada: so recebiam None ou anos >= 2015.
+    """
+    m = re.search(r"\b(19[89]\d|20[0-2]\d)\b", text)
     return int(m.group(1)) if m else None
 
 def extract_weight(text: str) -> float | None:
