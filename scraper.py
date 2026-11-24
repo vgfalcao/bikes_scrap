@@ -1775,7 +1775,13 @@ def send_email(listings: list, benchmarks: dict, total_analyzed: int, condiciona
     now     = datetime.now().strftime("%d/%m/%Y %H:%M")
     n       = len(listings)
     nc = len(condicionais) if condicionais else 0
-    subject = f"🚴 {n} oportunidade{'s' if n!=1 else ''}{f' + {nc} condicional{chr(105)+chr(115) if nc!=1 else chr(108)}' if nc else ''} — Bike Radar {now}"
+    # Plural de "condicional" e "condicionais": o radical e "condiciona" e o
+    # "l" do singular vira "is". A versao anterior montava o sufixo com
+    # chr(105)+chr(115) / chr(108) sobre a palavra inteira e produzia
+    # "condicionalis" para nc != 1 e "condicionall" para nc == 1.
+    cond_txt = f" + {nc} condiciona{'is' if nc != 1 else 'l'}" if nc else ""
+    subject = (f"🚴 {n} oportunidade{'s' if n != 1 else ''}{cond_txt}"
+               f" — Bike Radar {now}")
     html    = build_email_html(listings, now, total_analyzed, benchmarks, condicionais)
 
     msg = MIMEMultipart("alternative")

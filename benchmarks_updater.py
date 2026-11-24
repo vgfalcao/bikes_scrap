@@ -253,8 +253,17 @@ def _deriva_do_grupo(cat: str, grupo: str, novo: dict, samples: dict) -> tuple[f
     - a composicao da amostra nao enviesa o resultado — um grupo dominado por
       bikes baratas nao puxa o fator para baixo, porque cada amostra e medida
       contra a sua propria referencia.
+
+    Buckets cuja amostra propria e heterogenea demais (p75/p25 > MAX_DISPERSAO)
+    ficam de fora. Antes a trava so bloqueava a calibracao direta e as mesmas
+    amostras entravam na deriva pela porta dos fundos: em producao
+    mtb:alu_generico foi reprovado com p75/p25=3,1 e ainda assim respondeu por
+    72 das 93 razoes do grupo, que aplicou -53% a todos os buckets de MTB
+    aluminio. A dispersao das razoes do grupo nao pega isso, porque normalizar
+    pela mediana-base comprime justamente o espalhamento que reprovou o bucket.
     """
     razoes = []
+    excluidos = []
     for bench_key in GRUPOS.get(cat, {}).get(grupo, []):
         ref = novo.get(cat, {}).get(bench_key)
         if not isinstance(ref, dict):
@@ -262,8 +271,17 @@ def _deriva_do_grupo(cat: str, grupo: str, novo: dict, samples: dict) -> tuple[f
         base = ref.get("median_base") or ref.get("median")
         if not base:
             continue
-        for s in samples.get(f"{cat}:{bench_key}", {}).values():
-            razoes.append(s["p"] / base)
+        precos = [s["p"] for s in samples.get(f"{cat}:{bench_key}", {}).values()]
+        d_bucket = dispersao(precos)
+        if d_bucket and d_bucket > MAX_DISPERSAO:
+            excluidos.append((f"{cat}:{bench_key}", len(precos), d_bucket))
+            continue
+        razoes.extend(p / base for p in precos)
+
+    for bucket, n, d in excluidos:
+        log.info(f"  ! {bucket} (n={n}, p75/p25={d:.1f}) fora da deriva de "
+                 f"{cat}:{grupo} — amostra heterogênea")
+
     if len(razoes) < MIN_SAMPLES_GRUPO:
         return None
     d = dispersao(razoes)
@@ -411,8 +429,12 @@ def log_relatorio(rel: dict) -> None:
         log.info(f"  ✓ {c['bucket']:<28} n={c['n']:<4} "
                  f"median {a.get('median')} → {d['median']}{delta}  [{c['origem']}]")
     for bucket, n, d in sorted(rel["dispersos"], key=lambda x: -x[2]):
-        log.warning(f"  ⚠ {bucket:<28} n={n} p75/p25={d:.1f} — amostra heterogênea "
-                    f"demais, NÃO calibrado (revisar atribuição de bench_key)")
+        calibrado = next((c for c in cal if c["bucket"] == bucket), None)
+        destino = (f"usou a deriva de {calibrado['origem'].split('(')[0].strip()}"
+                   if calibrado else "mantém valor anterior")
+        log.warning(f"  ⚠ {bucket:<28} n={n} p75/p25={d:.1f} — amostra heterogênea, "
+                    f"fora da calibração direta e da deriva de grupo; {destino} "
+                    f"(revisar atribuição de bench_key)")
     for bucket, n in sorted(ins, key=lambda x: -x[1]):
         log.info(f"  · {bucket:<28} n={n} (precisa de {MIN_SAMPLES} próprias "
                  f"ou {MIN_SAMPLES_GRUPO} no grupo) — mantém valor anterior")
