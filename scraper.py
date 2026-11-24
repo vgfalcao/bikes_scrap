@@ -64,6 +64,8 @@ BENCHMARKS_DEFAULT = {
         "carbono_xtr_eagle": {"p25": 13000, "median": 18000, "p75": 24000, "novo_loja": 62000, "novo_ml": 52700},
         "alu_generico":      {"p25": 4800,  "median": 6800,  "p75": 8500,  "novo_loja": 20000, "novo_ml": 17000},
         "carbono_generico":  {"p25": 7000,  "median": 10000, "p75": 13000, "novo_loja": 31000, "novo_ml": 26350},
+        "alu_entrada":         {"p25": 4800,  "median": 6800, "p75": 8500, "novo_loja": 11000, "novo_ml": 9350},
+        "carbono_entrada":     {"p25": 7000,  "median": 10000, "p75": 13000, "novo_loja": 22000, "novo_ml": 18700},
     },
     # Tier A = importadas premium, Tier B = nacionais premium, Tier C = nacionais intermediárias
     "tiers": {
@@ -689,9 +691,18 @@ def score_mtb(attrs: dict, benchmarks: dict) -> tuple[int, dict]:
     elif any(_grupo_match(k, g) for k in ["slx"]):
         bench_key = "carbono_slx" if carbono else "alu_slx_rockshox"
     elif any(_grupo_match(k, g) for k in ["nx", "nx eagle", "deore"]):
-        bench_key = "carbono_generico" if carbono else "alu_generico"
+        # Grupo de entrada IDENTIFICADO. Populacao estreita e previsivel, que
+        # ate aqui dividia bucket com os anuncios de grupo desconhecido — duas
+        # coisas diferentes. Em producao o balde unico acumulou 72 anuncios de
+        # R$980 a R$21.000 (p75/p25 = 3,1), com 40 deles entre R$1k e R$3k e o
+        # resto espalhado ate o topo: a mediana resultante nao representava
+        # nenhum dos dois grupos.
+        bench_key = "carbono_entrada" if carbono else "alu_entrada"
     else:
         # Grupo ausente ou nao reconhecido: nao herda mediana de grupo nenhum.
+        # Este bucket e heterogeneo por natureza — nao se sabe o que ha na
+        # bike — e a trava de dispersao o mantem fora da calibracao direta e
+        # da deriva de grupo.
         bench_key = "carbono_generico" if carbono else "alu_generico"
         attrs["grupo_nao_confirmado"] = True
 

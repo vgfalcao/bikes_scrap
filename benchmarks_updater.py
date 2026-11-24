@@ -66,9 +66,10 @@ GRUPOS = {
                     "carbono_generico"],
     },
     "mtb": {
-        "alu":     ["alu_slx_rockshox", "alu_xt_fox", "alu_generico"],
+        "alu":     ["alu_slx_rockshox", "alu_xt_fox", "alu_generico",
+                    "alu_entrada"],
         "carbono": ["carbono_slx", "carbono_xt_fox", "carbono_xtr_eagle",
-                    "carbono_generico"],
+                    "carbono_generico", "carbono_entrada"],
     },
 }
 

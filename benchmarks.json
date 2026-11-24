@@ -168,6 +168,22 @@
       "n": 23,
       "calibrado_em": "2026-11-24",
       "origem": "direto"
+    },
+    "alu_entrada": {
+      "p25": 2300,
+      "median": 4156,
+      "p75": 6399,
+      "novo_loja": 11000,
+      "novo_ml": 9350,
+      "median_base": 4156
+    },
+    "carbono_entrada": {
+      "p25": 7000,
+      "median": 12500,
+      "p75": 13000,
+      "novo_loja": 22000,
+      "novo_ml": 18700,
+      "median_base": 12500
     }
   },
   "tiers": {
