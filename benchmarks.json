@@ -25,7 +25,7 @@
       "origem": "direto"
     },
     "carbono_ultegra": {
-      "p25": 9465,
+      "p25": 9498,
       "median": 12745,
       "p75": 18125,
       "novo_loja": 46000,
@@ -37,7 +37,7 @@
     },
     "carbono_di2": {
       "p25": 14000,
-      "median": 23999,
+      "median": 24350,
       "p75": 25000,
       "novo_loja": 68000,
       "novo_ml": 57800,
@@ -81,7 +81,7 @@
     },
     "carbono_generico": {
       "p25": 6800,
-      "median": 11368,
+      "median": 11534,
       "p75": 11500,
       "novo_loja": 31000,
       "novo_ml": 26350,
@@ -94,7 +94,7 @@
   "mtb": {
     "alu_slx_rockshox": {
       "p25": 4800,
-      "median": 3200,
+      "median": 4156,
       "p75": 8500,
       "novo_loja": 20000,
       "novo_ml": 17000,
@@ -149,7 +149,7 @@
     },
     "alu_generico": {
       "p25": 2300,
-      "median": 3200,
+      "median": 4156,
       "p75": 6399,
       "novo_loja": 20000,
       "novo_ml": 17000,
