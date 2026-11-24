@@ -94,7 +94,7 @@
   "mtb": {
     "alu_slx_rockshox": {
       "p25": 4800,
-      "median": 4156,
+      "median": 3200,
       "p75": 8500,
       "novo_loja": 20000,
       "novo_ml": 17000,
@@ -127,12 +127,12 @@
     },
     "carbono_xt_fox": {
       "p25": 9000,
-      "median": 11900,
+      "median": 11799,
       "p75": 15000,
       "novo_loja": 42000,
       "novo_ml": 35700,
       "median_base": 12000,
-      "n": 21,
+      "n": 19,
       "calibrado_em": "2026-11-24",
       "origem": "direto"
     },
@@ -148,42 +148,48 @@
       "origem": "grupo:carbono"
     },
     "alu_generico": {
-      "p25": 2300,
-      "median": 4156,
-      "p75": 6399,
+      "p25": 1899,
+      "median": 2700,
+      "p75": 5375,
       "novo_loja": 20000,
       "novo_ml": 17000,
       "median_base": 6800,
-      "n": 72,
+      "n": 70,
       "calibrado_em": "2026-11-24",
-      "origem": "grupo:alu"
+      "origem": "direto"
     },
     "carbono_generico": {
       "p25": 7000,
-      "median": 12500,
+      "median": 13574,
       "p75": 13000,
       "novo_loja": 31000,
       "novo_ml": 26350,
       "median_base": 10000,
-      "n": 23,
+      "n": 24,
       "calibrado_em": "2026-11-24",
       "origem": "direto"
     },
     "alu_entrada": {
       "p25": 2300,
-      "median": 4156,
+      "median": 1956,
       "p75": 6399,
       "novo_loja": 11000,
       "novo_ml": 9350,
-      "median_base": 4156
+      "median_base": 4156,
+      "n": 2,
+      "calibrado_em": "2026-11-24",
+      "origem": "grupo:alu"
     },
     "carbono_entrada": {
       "p25": 7000,
-      "median": 12500,
+      "median": 12917,
       "p75": 13000,
       "novo_loja": 22000,
       "novo_ml": 18700,
-      "median_base": 12500
+      "median_base": 12500,
+      "n": 1,
+      "calibrado_em": "2026-11-24",
+      "origem": "grupo:carbono"
     }
   },
   "tiers": {
