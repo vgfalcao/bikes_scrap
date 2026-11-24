@@ -208,7 +208,8 @@ HEADERS_SEMEXE = {
 # Cadastro: https://www.firecrawl.dev (Free plan, sem cartão)
 # Adicionar FIRECRAWL_API_KEY nos Secrets do GitHub.
 FIRECRAWL_API_KEY = os.environ.get("FIRECRAWL_API_KEY", "")
-FIRECRAWL_BASE    = "https://api.firecrawl.dev/v1"
+# v1 desligou em 10/12/2026 15:00 UTC e passou a devolver HTTP 410.
+FIRECRAWL_BASE    = "https://api.firecrawl.dev/v2"
 
 def firecrawl_scrape(url: str) -> requests.Response | None:
     """
@@ -238,7 +239,9 @@ def firecrawl_scrape(url: str) -> requests.Response | None:
             log.warning(f"Firecrawl HTTP {resp.status_code} para {url[:60]}")
             return None
         data = resp.json()
-        if not data.get("success"):
+        # Na v2 as respostas de sucesso podem nao trazer "success" — so trata
+        # como erro quando o campo vem explicitamente falso.
+        if data.get("success") is False:
             log.warning(f"Firecrawl erro para {url[:60]}: {data.get('error','?')}")
             return None
 
@@ -1107,6 +1110,14 @@ def firecrawl_search(query: str, limit: int = 5) -> list[dict]:
     Usa Firecrawl /search para buscar anúncios no Bikemagazine via índice web.
     Retorna lista de resultados com url, title, description, markdown.
     Consome 1 crédito por resultado (limit=5 → 5 créditos por query).
+
+    Na v2 os resultados web sairam de `data` para `data.web` — `data` virou um
+    dict com uma chave por fonte (web, news, images). Sem este ajuste a funcao
+    devolveria um dict e scrape_bikemagazine iteraria sobre os nomes das
+    chaves, nao sobre os anuncios.
+
+    `limit` continua sendo passado explicitamente: o default da v2 subiu de
+    5 para 10, o que dobraria o consumo de creditos por query se omitido.
     """
     if not FIRECRAWL_API_KEY:
         return []
@@ -1128,10 +1139,15 @@ def firecrawl_search(query: str, limit: int = 5) -> list[dict]:
             log.warning(f"Firecrawl Search HTTP {resp.status_code} para '{query[:50]}'")
             return []
         data = resp.json()
-        if not data.get("success"):
+        if data.get("success") is False:
             log.warning(f"Firecrawl Search erro: {data.get('error','?')}")
             return []
-        return data.get("data", [])
+
+        bloco = data.get("data", {})
+        if isinstance(bloco, dict):
+            return bloco.get("web", []) or []
+        # Formato da v1 (lista direta), mantido so por seguranca.
+        return bloco or []
     except Exception as e:
         log.warning(f"Firecrawl Search exceção: {e}")
         return []
