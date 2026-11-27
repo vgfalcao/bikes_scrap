@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-24",
+  "updated_at": "2026-11-27",
   "confidence": "medium",
   "speed": {
     "alu_105": {
@@ -11,36 +11,36 @@
       "median_base": 5200
     },
     "carbono_105": {
-      "p25": 9677,
-      "median": 12808,
-      "p75": 16366,
+      "p25": 9372,
+      "median": 12404,
+      "p75": 15850,
       "novo_loja": 31000,
       "novo_ml": 26350,
       "median_base": 9000,
-      "n": 4,
-      "calibrado_em": "2026-11-24",
+      "n": 8,
+      "calibrado_em": "2026-11-27",
       "origem": "grupo:carbono"
     },
     "carbono_ultegra": {
-      "p25": 13519,
-      "median": 18500,
-      "p75": 22769,
+      "p25": 13093,
+      "median": 17917,
+      "p75": 22051,
       "novo_loja": 46000,
       "novo_ml": 39100,
       "median_base": 13000,
-      "n": 9,
-      "calibrado_em": "2026-11-24",
+      "n": 11,
+      "calibrado_em": "2026-11-27",
       "origem": "grupo:carbono"
     },
     "carbono_di2": {
-      "p25": 19923,
-      "median": 27038,
-      "p75": 35576,
+      "p25": 19295,
+      "median": 26186,
+      "p75": 34455,
       "novo_loja": 68000,
       "novo_ml": 57800,
       "median_base": 19000,
-      "n": 0,
-      "calibrado_em": "2026-11-24",
+      "n": 2,
+      "calibrado_em": "2026-11-27",
       "origem": "grupo:carbono"
     },
     "alu_ultegra": {
@@ -68,25 +68,28 @@
       "median_base": 5200
     },
     "carbono_generico": {
-      "p25": 9677,
-      "median": 12808,
-      "p75": 16366,
+      "p25": 9372,
+      "median": 12404,
+      "p75": 15850,
       "novo_loja": 31000,
       "novo_ml": 26350,
       "median_base": 9000,
-      "n": 0,
-      "calibrado_em": "2026-11-24",
+      "n": 3,
+      "calibrado_em": "2026-11-27",
       "origem": "grupo:carbono"
     }
   },
   "mtb": {
     "alu_slx_rockshox": {
-      "p25": 4800,
-      "median": 6800,
-      "p75": 8500,
+      "p25": 2046,
+      "median": 2899,
+      "p75": 3624,
       "novo_loja": 20000,
       "novo_ml": 17000,
-      "median_base": 6800
+      "median_base": 6800,
+      "n": 0,
+      "calibrado_em": "2026-11-27",
+      "origem": "grupo:alu"
     },
     "alu_xt_fox": {
       "p25": 6500,
@@ -97,25 +100,25 @@
       "median_base": 9000
     },
     "carbono_slx": {
-      "p25": 7846,
-      "median": 11208,
-      "p75": 14570,
+      "p25": 8441,
+      "median": 12058,
+      "p75": 15675,
       "novo_loja": 31000,
       "novo_ml": 26350,
       "median_base": 10000,
       "n": 0,
-      "calibrado_em": "2026-11-24",
+      "calibrado_em": "2026-11-27",
       "origem": "grupo:carbono"
     },
     "carbono_xt_fox": {
-      "p25": 10088,
-      "median": 13450,
-      "p75": 16812,
+      "p25": 10853,
+      "median": 14470,
+      "p75": 18087,
       "novo_loja": 42000,
       "novo_ml": 35700,
       "median_base": 12000,
-      "n": 2,
-      "calibrado_em": "2026-11-24",
+      "n": 3,
+      "calibrado_em": "2026-11-27",
       "origem": "grupo:carbono"
     },
     "carbono_xtr_eagle": {
@@ -128,21 +131,25 @@
     },
     "alu_generico": {
       "p25": 4800,
-      "median": 6800,
+      "median": 2500,
       "p75": 8500,
       "novo_loja": 20000,
       "novo_ml": 17000,
-      "median_base": 6800
+      "median_base": 6800,
+      "disperso": false,
+      "n": 13,
+      "calibrado_em": "2026-11-27",
+      "origem": "direto"
     },
     "carbono_generico": {
-      "p25": 7846,
-      "median": 11208,
-      "p75": 14570,
+      "p25": 8441,
+      "median": 12058,
+      "p75": 15675,
       "novo_loja": 31000,
       "novo_ml": 26350,
       "median_base": 10000,
-      "n": 7,
-      "calibrado_em": "2026-11-24",
+      "n": 10,
+      "calibrado_em": "2026-11-27",
       "origem": "grupo:carbono"
     },
     "alu_entrada": {
@@ -154,14 +161,14 @@
       "median_base": 6800
     },
     "carbono_entrada": {
-      "p25": 7846,
-      "median": 11208,
-      "p75": 14570,
+      "p25": 8441,
+      "median": 12058,
+      "p75": 15675,
       "novo_loja": 22000,
       "novo_ml": 18700,
       "median_base": 10000,
       "n": 2,
-      "calibrado_em": "2026-11-24",
+      "calibrado_em": "2026-11-27",
       "origem": "grupo:carbono"
     }
   },
